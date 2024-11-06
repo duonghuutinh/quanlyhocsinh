@@ -1,4 +1,4 @@
-<?php    
+<?php
 include('partials/header.php');
 include('partials/sidebar.php');
 include('partials/connectDB.php');
@@ -39,9 +39,25 @@ include('partials/connectDB.php');
                             <div class="row mb-3">
                                 <label for="nienKhoa" class="col-sm-2 col-form-label">Niên Khoá</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="nienKhoa" name="nienKhoa" required>
+                                    <select class="form-control" id="nienKhoa" name="nienKhoa" required>
+                                        <option value="">Chọn Niên Khoá</option>
+                                        <?php
+                                        // Lấy danh sách niên khoá từ bảng namhoc
+                                        $sql_nienKhoa = "SELECT maNamHoc, nienKhoa FROM namhoc";
+                                        $result_nienKhoa = $conn->query($sql_nienKhoa);
+
+                                        if ($result_nienKhoa->num_rows > 0) {
+                                            while ($row = $result_nienKhoa->fetch_assoc()) {
+                                                echo "<option value='" . $row['nienKhoa'] . "'>" . $row['nienKhoa'] . "</option>";
+                                            }
+                                        } else {
+                                            echo "<option value=''>Không có niên khoá</option>";
+                                        }
+                                        ?>
+                                    </select>
                                 </div>
                             </div>
+                            
                             <div class="row mb-3">
                                 <div class="col-sm-10 offset-sm-2">
                                     <button type="submit" class="btn btn-primary">Thêm Lớp</button>
@@ -75,7 +91,9 @@ include('partials/connectDB.php');
             echo "<script>alert('Mã lớp này đã tồn tại. Vui lòng nhập mã lớp khác.');</script>";
         } else {
             // Kiểm tra xem lớp với tên và niên khoá có trùng không
-            $sql_check_name = "SELECT * FROM lop WHERE tenLop = ? AND nienKhoa = ?";
+            $sql_check_name = "SELECT l.* FROM lop l
+                               JOIN namhoc n ON l.maNamHoc = n.maNamHoc
+                               WHERE l.tenLop = ? AND n.nienKhoa = ?";
             $stmt_check_name = $conn->prepare($sql_check_name);
             $stmt_check_name->bind_param("ss", $tenLop, $nienKhoa);
             $stmt_check_name->execute();
@@ -85,34 +103,41 @@ include('partials/connectDB.php');
                 // Nếu lớp với tên và niên khoá đã tồn tại
                 echo "<script>alert('Lớp với tên và niên khoá này đã tồn tại. Vui lòng nhập lại thông tin khác.');</script>";
             } else {
-                // Nếu mã lớp và tên niên khoá đều chưa tồn tại, thực hiện thêm lớp vào cơ sở dữ liệu
-                $sql = "INSERT INTO lop (maLop, tenLop, nienKhoa) VALUES (?, ?, ?)";
-                $stmt = $conn->prepare($sql);
+                // Lấy mã niên khoá từ bảng namhoc
+                $sql_get_maNamHoc = "SELECT maNamHoc FROM namhoc WHERE nienKhoa = ?";
+                $stmt_get_maNamHoc = $conn->prepare($sql_get_maNamHoc);
+                $stmt_get_maNamHoc->bind_param("s", $nienKhoa);
+                $stmt_get_maNamHoc->execute();
+                $result_get_maNamHoc = $stmt_get_maNamHoc->get_result();
 
-                // Kiểm tra chuẩn bị câu lệnh SQL
-                if ($stmt === false) {
-                    die("Lỗi chuẩn bị câu lệnh: " . $conn->error);
-                }
+                if ($result_get_maNamHoc->num_rows > 0) {
+                    $row = $result_get_maNamHoc->fetch_assoc();
+                    $maNamHoc = $row['maNamHoc'];
 
-                // Gán giá trị vào câu lệnh SQL
-                $stmt->bind_param("sss", $maLop, $tenLop, $nienKhoa);
+                    // Thêm lớp vào bảng lop
+                    $sql = "INSERT INTO lop (maLop, tenLop, maNamHoc) VALUES (?, ?, ?)";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("sss", $maLop, $tenLop, $maNamHoc);
 
-                // Thực thi câu lệnh và kiểm tra kết quả
-                if ($stmt->execute()) {
-                    echo "<script>alert('Thêm Lớp thành công!'); window.location.href = 'lop.php';</script>";
+                    if ($stmt->execute()) {
+                        echo "<script>alert('Thêm Lớp thành công!'); window.location.href = 'lop.php';</script>";
+                    } else {
+                        echo "Lỗi khi thêm Lớp: " . $stmt->error;
+                    }
+
+                    $stmt->close();
                 } else {
-                    echo "Lỗi khi thêm Lớp: " . $stmt->error;
+                    echo "<script>alert('Niên Khoá không hợp lệ.');</script>";
                 }
 
-                // Đóng câu lệnh và kết nối
-                $stmt->close();
+                $stmt_get_maNamHoc->close();
             }
 
             // Đóng kết nối kiểm tra lớp theo tên và niên khoá
             $stmt_check_name->close();
         }
 
-        // Đóng kết nối
+        // Đóng kết nối kiểm tra mã lớp
         $stmt_check->close();
         $conn->close();
     }

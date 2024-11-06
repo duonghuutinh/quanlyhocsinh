@@ -1,4 +1,4 @@
-<?php  
+<?php
 include('partials/header.php');
 include('partials/sidebar.php');
 include('partials/connectDB.php');
@@ -10,13 +10,36 @@ if (isset($_GET['maLop'])) {
     // Truy vấn thông tin lớp từ cơ sở dữ liệu
     $query = "SELECT * FROM lop WHERE maLop = ?";
     $stmt = $conn->prepare($query);
+
+    // Kiểm tra lỗi trong việc chuẩn bị truy vấn
+    if (!$stmt) {
+        echo "Lỗi trong việc chuẩn bị truy vấn: " . $conn->error;
+        exit;
+    }
+
     $stmt->bind_param("s", $maLop);
     $stmt->execute();
     $result = $stmt->get_result();
     $lop = $result->fetch_assoc();
 
+    // Kiểm tra nếu lớp không tồn tại
     if (!$lop) {
         echo "Không tìm thấy lớp.";
+        exit;
+    }
+
+    // Truy vấn thông tin niên khoá (năm học) từ bảng namhoc
+    $maNamHoc = $lop['maNamHoc'];
+    $query_namhoc = "SELECT * FROM namhoc WHERE maNamHoc = ?";
+    $stmt_namhoc = $conn->prepare($query_namhoc);
+    $stmt_namhoc->bind_param("s", $maNamHoc);
+    $stmt_namhoc->execute();
+    $result_namhoc = $stmt_namhoc->get_result();
+    $namhoc = $result_namhoc->fetch_assoc();
+
+    // Kiểm tra nếu niên khoá không tồn tại
+    if (!$namhoc) {
+        echo "Không tìm thấy niên khoá.";
         exit;
     }
 } else {
@@ -27,12 +50,19 @@ if (isset($_GET['maLop'])) {
 // Kiểm tra nếu form được submit để cập nhật thông tin
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $tenLop = $_POST['tenLop'];
-    $nienKhoa = $_POST['nienKhoa'];
+    $maNamHoc = $_POST['maNamHoc']; // Chọn maNamHoc thay vì nienKhoa
 
     // Kiểm tra nếu lớp với tên và niên khoá này đã tồn tại
-    $check_query = "SELECT * FROM lop WHERE tenLop = ? AND nienKhoa = ? AND maLop != ?";
+    $check_query = "SELECT * FROM lop WHERE tenLop = ? AND maNamHoc = ? AND maLop != ?";
     $stmt_check = $conn->prepare($check_query);
-    $stmt_check->bind_param("sss", $tenLop, $nienKhoa, $maLop);
+
+    // Kiểm tra lỗi trong việc chuẩn bị truy vấn
+    if (!$stmt_check) {
+        echo "Lỗi trong việc chuẩn bị truy vấn kiểm tra: " . $conn->error;
+        exit;
+    }
+
+    $stmt_check->bind_param("sss", $tenLop, $maNamHoc, $maLop);
     $stmt_check->execute();
     $result_check = $stmt_check->get_result();
 
@@ -41,9 +71,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "<script>alert('Lớp với tên và niên khoá này đã tồn tại. Vui lòng nhập lại thông tin khác.');</script>";
     } else {
         // Cập nhật thông tin lớp
-        $update_query = "UPDATE lop SET tenLop = ?, nienKhoa = ? WHERE maLop = ?";
+        $update_query = "UPDATE lop SET tenLop = ?, maNamHoc = ? WHERE maLop = ?";
         $stmt_update = $conn->prepare($update_query);
-        $stmt_update->bind_param("sss", $tenLop, $nienKhoa, $maLop);
+
+        // Kiểm tra lỗi trong việc chuẩn bị truy vấn cập nhật
+        if (!$stmt_update) {
+            echo "Lỗi trong việc chuẩn bị truy vấn cập nhật: " . $conn->error;
+            exit;
+        }
+
+        $stmt_update->bind_param("sss", $tenLop, $maNamHoc, $maLop);
 
         if ($stmt_update->execute()) {
             echo "<script>alert('Cập nhật thông tin lớp thành công!'); window.location.href = 'lop.php';</script>";
@@ -77,7 +114,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="row mb-3">
                                 <label for="maLop" class="col-sm-2 col-form-label">Mã Lớp</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="maLop" name="maLop" value="<?php echo htmlspecialchars($lop['maLop']); ?>" readonly>
+                                    <input type="text" class="form-control" id="maLop" name="maLop" value="<?php echo htmlspecialchars($lop['maLop']); ?>" readonly required>
                                 </div>
                             </div>
 
@@ -89,9 +126,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </div>
 
                             <div class="row mb-3">
-                                <label for="nienKhoa" class="col-sm-2 col-form-label">Niên Khóa</label>
+                                <label for="maNamHoc" class="col-sm-2 col-form-label">Niên Khóa</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="nienKhoa" name="nienKhoa" value="<?php echo htmlspecialchars($lop['nienKhoa']); ?>" required>
+                                    <select class="form-control" id="maNamHoc" name="maNamHoc" required>
+                                        <option value="">Chọn Niên Khóa</option>
+                                        <?php
+                                        // Truy vấn các niên khoá có sẵn
+                                        $query_namhoc = "SELECT * FROM namhoc";
+                                        $stmt_namhoc = $conn->prepare($query_namhoc);
+                                        $stmt_namhoc->execute();
+                                        $result_namhoc = $stmt_namhoc->get_result();
+
+                                        while ($row_namhoc = $result_namhoc->fetch_assoc()) {
+                                            $selected = ($lop['maNamHoc'] == $row_namhoc['maNamHoc']) ? 'selected' : '';
+                                            echo "<option value='" . $row_namhoc['maNamHoc'] . "' $selected>" . $row_namhoc['nienKhoa'] . "</option>";
+                                        }
+                                        ?>
+                                    </select>
                                 </div>
                             </div>
 
