@@ -1,8 +1,30 @@
-<?php
+<?php 
 include('partials/header.php');
 include('partials/sidebar.php');
 include('partials/connectDB.php');
+
+// Kiểm tra xem mã năm học có được gửi qua URL để xóa
+if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['maNamHoc'])) {
+    $maNamHoc = $_GET['maNamHoc'];
+
+    // Câu lệnh SQL để xóa năm học
+    $sql = "DELETE FROM namhoc WHERE maNamHoc = ?";
+    $stmt = $conn->prepare($sql);
+    
+    if ($stmt) {
+        $stmt->bind_param("s", $maNamHoc);
+        if ($stmt->execute()) {
+            echo "<script>alert('Xóa năm học thành công!'); window.location.href = 'namhoc.php';</script>";
+        } else {
+            echo "<script>alert('Lỗi khi xóa năm học: " . $stmt->error . "'); window.location.href = 'namhoc.php';</script>";
+        }
+        $stmt->close();
+    } else {
+        echo "<script>alert('Lỗi chuẩn bị câu lệnh: " . $conn->error . "');</script>";
+    }
+}
 ?>
+
 <main id="main" class="main">
   <div class="pagetitle">
     <h1>Giáo Viên</h1>
@@ -23,7 +45,7 @@ include('partials/connectDB.php');
           <div class="card-body">
             <h5 class="card-title d-flex justify-content-between align-items-center">
               <div>
-                <a href="add_giaovien.php" class="btn btn-primary me-2">Thêm</a>
+                <a href="add_namhoc.php" class="btn btn-primary me-2">Thêm</a>
                 <a href="#" class="btn btn-success"><i class="ri-file-word-2-line"></i> Xuất Excel</a>
               </div>
             </h5>
@@ -31,35 +53,25 @@ include('partials/connectDB.php');
               <thead>
                 <tr>
                   <th scope="col">STT</th>
-                  <th scope="col">Mã Giáo Viên</th>
-                  <th scope="col">Họ và tên</th>
-                  <th scope="col">Giới tính</th>
-                  <th scope="col">Ngày sinh</th>
-                  <th scope="col">Số điện thoại</th>
-                  <th scope="col">Email</th>
-                  <th scope="col">Địa chỉ</th>
+                  <th scope="col">Năm học</th>
+                  <th scope="col">Niên khoá</th>
                   <th scope="col">Thao tác</th>
               </thead>
 
               <tbody>
                 <?php
-                $sql = "SELECT * FROM giaovien";
+                $sql = "SELECT * FROM namhoc";
                 $result = $conn->query($sql);
                 if ($result->num_rows > 0) {
                   $stt = 1;
                   while ($row = $result->fetch_assoc()) {
                     echo "<tr>
                     <th scope='row'>{$stt}</th>
-                    <td>{$row['maGV']}</td>
-                    <td>{$row['hoTen']}</td>
-                    <td>{$row['gioiTinh']}</td>
-                    <td>{$row['ngaySinh']}</td>
-                    <td>{$row['SDT']}</td>
-                    <td>{$row['email']}</td>
-                    <td>{$row['diaChi']}</td>          
+                    <td>{$row['maNamHoc']}</td>     
+                    <td>{$row['nienKhoa']}</td>                       
                     <td>
-                        <a href='edit_giaovien.php?maGV=" . $row['maGV'] . "' class='btn btn-success'><i class='bi bi-pencil-square'></i></a>
-                        <a href='giaovien.php?delete=true&maGV=" . $row['maGV'] . "' class='btn btn-danger' onclick='return confirm(\"Bạn có chắc chắn muốn xóa?\")'><i class='bi bi-trash'></i></a>
+                        <a href='edit_namhoc.php?maNamHoc={$row['maNamHoc']}' class='btn btn-success'><i class='bi bi-pencil-square'></i></a>
+                        <a href='?action=delete&maNamHoc={$row['maNamHoc']}' class='btn btn-danger' onclick='return confirm(\"Bạn có chắc chắn muốn xóa?\")'><i class='bi bi-trash'></i></a>
                     </td>
                     </tr>";
                     $stt++;
@@ -76,21 +88,6 @@ include('partials/connectDB.php');
       </div>
     </div>
   </section>
-  
-  <?php
-  if (isset($_GET['delete']) && isset($_GET['maGV'])) {
-    $maGV = $_GET['maGV'];
-    // Thực hiện câu lệnh xóa
-    $query = "DELETE FROM giaovien WHERE maGV = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("s", $maGV);
-
-    if ($stmt->execute()) {
-      echo "<script>alert('Xoá thành công!'); window.location.href = 'giaovien.php';</script>";
-  } else {
-      echo "Lỗi khi xoá giáo viên: " . $stmt->error;
-  }
-}
-?>
-
 </main><!-- End #main -->
+
+<?php include('partials/footer.php'); ?>

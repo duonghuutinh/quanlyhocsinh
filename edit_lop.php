@@ -1,4 +1,4 @@
-<?php 
+<?php  
 include('partials/header.php');
 include('partials/sidebar.php');
 include('partials/connectDB.php');
@@ -29,15 +29,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $tenLop = $_POST['tenLop'];
     $nienKhoa = $_POST['nienKhoa'];
 
-    // Cập nhật thông tin lớp
-    $update_query = "UPDATE lop SET tenLop = ?, nienKhoa = ? WHERE maLop = ?";
-    $stmt = $conn->prepare($update_query);
-    $stmt->bind_param("sss", $tenLop, $nienKhoa, $maLop);
+    // Kiểm tra nếu lớp với tên và niên khoá này đã tồn tại
+    $check_query = "SELECT * FROM lop WHERE tenLop = ? AND nienKhoa = ? AND maLop != ?";
+    $stmt_check = $conn->prepare($check_query);
+    $stmt_check->bind_param("sss", $tenLop, $nienKhoa, $maLop);
+    $stmt_check->execute();
+    $result_check = $stmt_check->get_result();
 
-    if ($stmt->execute()) {
-        echo "<script>alert('Cập nhật thông tin lớp thành công!'); window.location.href = 'lop.php';</script>";
+    if ($result_check->num_rows > 0) {
+        // Nếu lớp với tên và niên khoá đã tồn tại
+        echo "<script>alert('Lớp với tên và niên khoá này đã tồn tại. Vui lòng nhập lại thông tin khác.');</script>";
     } else {
-        echo "Lỗi khi cập nhật lớp: " . $stmt->error;
+        // Cập nhật thông tin lớp
+        $update_query = "UPDATE lop SET tenLop = ?, nienKhoa = ? WHERE maLop = ?";
+        $stmt_update = $conn->prepare($update_query);
+        $stmt_update->bind_param("sss", $tenLop, $nienKhoa, $maLop);
+
+        if ($stmt_update->execute()) {
+            echo "<script>alert('Cập nhật thông tin lớp thành công!'); window.location.href = 'lop.php';</script>";
+        } else {
+            echo "Lỗi khi cập nhật lớp: " . $stmt_update->error;
+        }
     }
 }
 ?>

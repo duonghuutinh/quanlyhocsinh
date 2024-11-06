@@ -10,6 +10,48 @@ $result_giaovien = $conn->query($sql_giaovien);
 // Lấy danh sách lớp
 $sql_lop = "SELECT maLop, tenLop FROM lop";
 $result_lop = $conn->query($sql_lop);
+
+// Lấy danh sách năm học
+$sql_namhoc = "SELECT maNamHoc, nienKhoa FROM namhoc";
+$result_namhoc = $conn->query($sql_namhoc);
+
+
+// Kiểm tra xem dữ liệu có được gửi đi không
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $maGV = $_POST['maGV'];
+    $maLop = $_POST['maLop'];
+    $maNamHoc = $_POST['maNamHoc'];
+
+    // Kiểm tra nếu giáo viên đã chủ nhiệm 1 lớp nào đó trong năm học này
+    $sql_check_giaovien = "SELECT * FROM chunhiem WHERE maGV = '$maGV' AND maNamHoc = '$maNamHoc'";
+    $result_check_giaovien = $conn->query($sql_check_giaovien);
+
+    if ($result_check_giaovien->num_rows > 0) {
+        // Nếu giáo viên đã chủ nhiệm lớp trong năm học này
+        echo "<script>alert('Giáo viên đã chủ nhiệm lớp trong năm học này.'); window.location.href = 'add_chunhiem.php';</script>";
+        exit;
+    }
+
+    // Kiểm tra nếu lớp đã có giáo viên chủ nhiệm trong năm học này
+    $sql_check_lop = "SELECT * FROM chunhiem WHERE maLop = '$maLop' AND maNamHoc = '$maNamHoc'";
+    $result_check_lop = $conn->query($sql_check_lop);
+
+    if ($result_check_lop->num_rows > 0) {
+        // Nếu lớp đã có giáo viên chủ nhiệm
+        echo "<script>alert('Lớp này đã có giáo viên chủ nhiệm trong năm học này.'); window.location.href = 'add_chunhiem.php';</script>";
+        exit;
+    }
+
+    // Thực hiện thêm chủ nhiệm
+    $sql_insert = "INSERT INTO chunhiem (maGV, maLop, maNamHoc) VALUES ('$maGV', '$maLop', '$maNamHoc')";
+    
+    if ($conn->query($sql_insert) === TRUE) {
+        echo "<script>alert('Thêm chủ nhiệm thành công!'); window.location.href = 'chunhiem.php';</script>";
+    } else {
+        echo "<script>alert('Có lỗi khi thêm chủ nhiệm.'); window.history.back();</script>";
+    }
+}
+
 ?>
 
 <main id="main" class="main">
@@ -32,7 +74,6 @@ $result_lop = $conn->query($sql_lop);
 
                         <!-- Biểu mẫu thêm giáo viên -->
                         <form action="add_chunhiem.php" method="POST">
-                            <!-- Chọn giáo viên -->
                             <div class="row mb-3">
                                 <label for="maGV" class="col-sm-2 col-form-label">Giáo Viên</label>
                                 <div class="col-sm-10">
@@ -45,7 +86,6 @@ $result_lop = $conn->query($sql_lop);
                                 </div>
                             </div>
 
-                            <!-- Chọn lớp -->
                             <div class="row mb-3">
                                 <label for="maLop" class="col-sm-2 col-form-label">Lớp</label>
                                 <div class="col-sm-10">
@@ -58,11 +98,21 @@ $result_lop = $conn->query($sql_lop);
                                 </div>
                             </div>
 
-                            <!-- Nhập năm học -->
                             <div class="row mb-3">
-                                <label for="namHoc" class="col-sm-2 col-form-label">Năm Học</label>
+                                <label for="maNamHoc" class="col-sm-2 col-form-label">Năm Học</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="namHoc" name="namHoc" required>
+                                    <select class="form-control" id="maNamHoc" name="maNamHoc" required>
+                                        <option value="">Chọn Năm Học</option>
+                                        <?php 
+                                        if ($result_namhoc->num_rows > 0) {
+                                            while($row = $result_namhoc->fetch_assoc()): ?>
+                                                <option value="<?php echo $row['maNamHoc']; ?>"><?php echo $row['nienKhoa']; ?></option>
+                                            <?php endwhile;
+                                        } else {
+                                            echo "<option value=''>Không có dữ liệu năm học</option>";
+                                        }
+                                        ?>
+                                    </select>
                                 </div>
                             </div>
 
@@ -71,7 +121,7 @@ $result_lop = $conn->query($sql_lop);
                                     <button type="submit" class="btn btn-primary">Thêm Chủ Nhiệm</button>
                                 </div>
                             </div>
-                        </form><!-- End Biểu mẫu thêm giáo viên -->
+                        </form>
 
                     </div>
                 </div>
@@ -79,56 +129,5 @@ $result_lop = $conn->query($sql_lop);
         </div>
     </section>
 </main><!-- End #main -->
-<?php
-// Kiểm tra xem form đã được gửi chưa
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Lấy dữ liệu từ form
-    $maGV = $_POST['maGV'];
-    $maLop = $_POST['maLop'];
-    $namHoc = $_POST['namHoc'];
-
-    // Kiểm tra xem lớp đã có giáo viên chủ nhiệm chưa
-    $sql_check_lop = "SELECT * FROM chunhiem WHERE maLop = ? AND namHoc = ?";
-    $stmt_check_lop = $conn->prepare($sql_check_lop);
-    $stmt_check_lop->bind_param("is", $maLop, $namHoc);
-    $stmt_check_lop->execute();
-    $result_check_lop = $stmt_check_lop->get_result();
-
-    // Kiểm tra xem giáo viên đã chủ nhiệm lớp nào trong năm học này chưa
-    $sql_check_gv = "SELECT * FROM chunhiem WHERE maGV = ? AND namHoc = ?";
-    $stmt_check_gv = $conn->prepare($sql_check_gv);
-    $stmt_check_gv->bind_param("is", $maGV, $namHoc);
-    $stmt_check_gv->execute();
-    $result_check_gv = $stmt_check_gv->get_result();
-
-    if ($result_check_lop->num_rows > 0) {
-        // Nếu lớp đã có giáo viên chủ nhiệm, thông báo lỗi
-        echo "<script>alert('Lớp này đã có giáo viên chủ nhiệm cho năm học này!'); window.location.href = 'add_chunhiem.php';</script>";
-    } elseif ($result_check_gv->num_rows > 0) {
-        // Nếu giáo viên đã chủ nhiệm một lớp khác, thông báo lỗi
-        echo "<script>alert('Giáo viên này đã chủ nhiệm một lớp khác trong năm học này!'); window.location.href = 'add_chunhiem.php';</script>";
-    } else {
-        // Nếu cả hai điều kiện đều thỏa mãn, thêm giáo viên chủ nhiệm vào lớp
-        $sql_insert = "INSERT INTO chunhiem (maGV, maLop, namHoc) VALUES (?, ?, ?)";
-        $stmt_insert = $conn->prepare($sql_insert);
-        $stmt_insert->bind_param("sis", $maGV, $maLop, $namHoc);
-
-        if ($stmt_insert->execute()) {
-            echo "<script>alert('Thêm giáo viên chủ nhiệm thành công!'); window.location.href = 'chunhiem.php';</script>";
-        } else {
-            echo "<script>alert('Có lỗi xảy ra, vui lòng thử lại!'); window.location.href = 'add_chunhiem.php';</script>";
-        }
-    }
-
-    // Đóng kết nối
-    $stmt_check_lop->close();
-    $stmt_check_gv->close();
-    $stmt_insert->close();
-    $conn->close();
-}
-?>
-
-
-
 
 <?php include('partials/footer.php'); ?>

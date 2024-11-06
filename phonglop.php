@@ -30,7 +30,7 @@ include('partials/connectDB.php');
                                 <a href="#" class="btn btn-success"><i class="ri-file-word-2-line"></i> Xuất Excel</a>  
                             </div>                          
                         </h5>
-                        <table class="table datatable ">
+                        <table class="table ">
                             <thead>
                                 <tr>
                                     <th scope="col">ID</th>

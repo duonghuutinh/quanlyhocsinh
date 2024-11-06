@@ -9,6 +9,12 @@
       <span>Trang chủ</span>
     </a>
   </li><!-- End Dashboard Nav -->
+  <li class="nav-item">
+    <a class="nav-link " href="namhoc.php">
+      <i class="bi bi-grid"></i>
+      <span>Năm Học</span>
+    </a>
+  </li><!-- End Dashboard Nav -->
 
   <li class="nav-item">
     <a class="nav-link collapsed" href="giaovien.php">

@@ -1,4 +1,4 @@
-<?php
+<?php  
 include('partials/header.php');
 include('partials/sidebar.php');
 include('partials/connectDB.php');
@@ -27,7 +27,7 @@ $result_lop = $conn->query($sql_lop);
                         <h5 class="card-title">Thêm Học Sinh</h5>
 
                         <!-- Biểu mẫu thêm Học Sinh -->
-                        <form action="add_hocsinh.php" method="POST">
+                        <form action="" method="POST">
                             <div class="row mb-3">
                                 <label for="maHS" class="col-sm-2 col-form-label">Mã Học Sinh</label>
                                 <div class="col-sm-10">
@@ -80,8 +80,7 @@ $result_lop = $conn->query($sql_lop);
                             <div class="row mb-3">
                                 <label for="sdtPH" class="col-sm-2 col-form-label">Số Điện Thoại Phụ Huynh</label>
                                 <div class="col-sm-10">
-                                    <input type="tel" class="form-control" id="sdtPH" name="sdtPH" pattern="[0-9]{10}"
-                                        maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                                    <input type="tel" class="form-control" id="sdtPH" name="sdtPH" pattern="[0-9]{10}" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
                                 </div>
                             </div>
 
@@ -120,27 +119,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $maLop = $_POST['maLop'];
     $diaChi = $_POST['diaChi'];
 
-    // Câu lệnh SQL để thêm học sinh vào bảng hocsinh
-    $sql = "INSERT INTO hocsinh (maHS, hoTen, gioiTinh, ngaySinh, diaChi, sdtPH, maLop) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
+    // Kiểm tra nếu mã học sinh đã tồn tại
+    $check_query = "SELECT maHS FROM hocsinh WHERE maHS = ?";
+    $check_stmt = $conn->prepare($check_query);
+    $check_stmt->bind_param("s", $maHS);
+    $check_stmt->execute();
+    $check_result = $check_stmt->get_result();
 
-    // Kiểm tra chuẩn bị câu lệnh SQL
-    if ($stmt === false) {
-        die("Lỗi chuẩn bị câu lệnh: " . $conn->error);
-    }
-
-    // Gán giá trị vào câu lệnh SQL
-    $stmt->bind_param("sssssss", $maHS, $hoTen, $gioiTinh, $ngaySinh, $diaChi, $sdtPH, $maLop);
-
-    // Thực thi câu lệnh và kiểm tra kết quả
-    if ($stmt->execute()) {
-        echo "<script>alert('Thêm Học Sinh thành công!'); window.location.href = 'hocsinh.php';</script>";
+    if ($check_result->num_rows > 0) {
+        echo "<script>alert('Mã Học Sinh đã tồn tại. Vui lòng nhập mã khác.'); window.history.back();</script>";
     } else {
-        echo "Lỗi khi thêm Học Sinh: " . $stmt->error;
+        // Thêm học sinh mới nếu không trùng mã
+        $sql = "INSERT INTO hocsinh (maHS, hoTen, gioiTinh, ngaySinh, diaChi, sdtPH, maLop) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+
+        if ($stmt === false) {
+            die("Lỗi chuẩn bị câu lệnh: " . $conn->error);
+        }
+
+        $stmt->bind_param("sssssss", $maHS, $hoTen, $gioiTinh, $ngaySinh, $diaChi, $sdtPH, $maLop);
+
+        if ($stmt->execute()) {
+            echo "<script>alert('Thêm Học Sinh thành công!'); window.location.href = 'hocsinh.php';</script>";
+        } else {
+            echo "Lỗi khi thêm Học Sinh: " . $stmt->error;
+        }
+
+        $stmt->close();
     }
 
-    // Đóng câu lệnh và kết nối
-    $stmt->close();
+    $check_stmt->close();
     $conn->close();
 }
 ?>

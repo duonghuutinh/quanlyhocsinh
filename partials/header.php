@@ -7,7 +7,7 @@ session_start(); // Start the session to access session variables
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Phòng Lớp</title>
+  <title>SmartAdmin</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
