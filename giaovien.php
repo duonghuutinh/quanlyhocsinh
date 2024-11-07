@@ -16,18 +16,44 @@ include('partials/connectDB.php');
   <div class="pagetitle">
     <h1>Danh sách giáo viên</h1>
   </div>
+
+
   <section class="section">
     <div class="row">
       <div class="col-lg-12">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title d-flex justify-content-between align-items-center">
-              <div>
+              
+              <!-- Group buttons and search form in the same row -->
+              <div class="d-flex align-items-center w-100 ">
+                <!-- Add and Export PDF buttons -->
                 <a href="add_giaovien.php" class="btn btn-primary me-2">Thêm</a>
-                <a href="export_pdf_giaovien.php" class="btn btn-success"><i class="ri-file-word-2-line"></i> Xuất PDF</a>
+                <a href="export_pdf_giaovien.php" class="btn btn-success me-4 "><i class="ri-file-word-2-line"></i>Xuất PDF</a>
+                <!-- Search Form -->
+                <form method="GET" action="" class="d-flex align-items-center mt-3 w-50 ">
+                  <div class="me-2" style="flex: 1;">
+                    <select name="column" class="form-select">
+                      <option value="">Tất cả</option>
+                      <option value="maGV">Mã Giáo Viên</option>
+                      <option value="hoTen">Họ và tên</option>
+                      <option value="gioiTinh">Giới tính</option>
+                      <option value="ngaySinh">Ngày sinh</option>
+                      <option value="SDT">Số điện thoại</option>
+                      <option value="email">Email</option>
+                      <option value="diaChi">Địa chỉ</option>
+                    </select>
+                  </div>
+                  <div class="me-2" style="flex: 1;">
+                    <input type="text" name="keyword" class="form-control" placeholder="Nhập từ khóa tìm kiếm">
+                  </div>
+                  <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                </form>
               </div>
             </h5>
-            <table class="table">
+
+            <!-- Search Form -->
+            <table class="table table-bordered">
               <thead>
                 <tr>
                   <th scope="col">STT</th>
@@ -39,58 +65,80 @@ include('partials/connectDB.php');
                   <th scope="col">Email</th>
                   <th scope="col">Địa chỉ</th>
                   <th scope="col">Thao tác</th>
+                </tr>
               </thead>
 
               <tbody>
                 <?php
                 $sql = "SELECT * FROM giaovien";
-                $result = $conn->query($sql);
+
+                // Check if search parameters are provided
+                if (isset($_GET['column']) && isset($_GET['keyword'])) {
+                  $column = $_GET['column'];
+                  $keyword = $_GET['keyword'];
+                  $searchTerm = "%" . $keyword . "%";
+
+                  // Modify SQL query based on column selection
+                  if ($column) {
+                    $sql .= " WHERE $column LIKE ?";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("s", $searchTerm);
+                  } else {
+                    // Search across all relevant columns
+                    $sql .= " WHERE maGV LIKE ? OR hoTen LIKE ? OR gioiTinh LIKE ? OR ngaySinh LIKE ? OR SDT LIKE ? OR email LIKE ? OR diaChi LIKE ?";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("sssssss", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm);
+                  }
+                } else {
+                  $stmt = $conn->prepare($sql);
+                }
+
+                $stmt->execute();
+                $result = $stmt->get_result();
+
                 if ($result->num_rows > 0) {
                   $stt = 1;
                   while ($row = $result->fetch_assoc()) {
                     echo "<tr>
-                    <th scope='row'>{$stt}</th>
-                    <td>{$row['maGV']}</td>
-                    <td>{$row['hoTen']}</td>
-                    <td>{$row['gioiTinh']}</td>
-                    <td>{$row['ngaySinh']}</td>
-                    <td>{$row['SDT']}</td>
-                    <td>{$row['email']}</td>
-                    <td>{$row['diaChi']}</td>          
-                    <td>
+                      <th scope='row'>{$stt}</th>
+                      <td>{$row['maGV']}</td>
+                      <td>{$row['hoTen']}</td>
+                      <td>{$row['gioiTinh']}</td>
+                      <td>{$row['ngaySinh']}</td>
+                      <td>{$row['SDT']}</td>
+                      <td>{$row['email']}</td>
+                      <td>{$row['diaChi']}</td>          
+                      <td>
                         <a href='edit_giaovien.php?maGV=" . $row['maGV'] . "' class='btn btn-success'><i class='bi bi-pencil-square'></i></a>
                         <a href='giaovien.php?delete=true&maGV=" . $row['maGV'] . "' class='btn btn-danger' onclick='return confirm(\"Bạn có chắc chắn muốn xóa?\")'><i class='bi bi-trash'></i></a>
-                    </td>
+                      </td>
                     </tr>";
                     $stt++;
                   }
                 } else {
-                  echo "<tr><td colspan='6' class='text-center'>Không có dữ liệu nào</td></tr>";
+                  echo "<tr><td colspan='9' class='text-center'>Không có dữ liệu nào</td></tr>";
                 }
                 ?>
               </tbody>
-
             </table>
           </div>
         </div>
       </div>
     </div>
   </section>
-  
+
   <?php
   if (isset($_GET['delete']) && isset($_GET['maGV'])) {
     $maGV = $_GET['maGV'];
-    // Thực hiện câu lệnh xóa
     $query = "DELETE FROM giaovien WHERE maGV = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("s", $maGV);
 
     if ($stmt->execute()) {
       echo "<script>alert('Xoá thành công!'); window.location.href = 'giaovien.php';</script>";
-  } else {
+    } else {
       echo "Lỗi khi xoá giáo viên: " . $stmt->error;
+    }
   }
-}
-?>
-
+  ?>
 </main><!-- End #main -->
