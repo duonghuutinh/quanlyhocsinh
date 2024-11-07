@@ -41,7 +41,7 @@ if (isset($_GET['delete']) && isset($_GET['maGV']) && isset($_GET['maLop'])) {
             <h5 class="card-title d-flex justify-content-between align-items-center">
               <div>
                 <a href="add_chunhiem.php" class="btn btn-primary me-2">Thêm</a>
-                <a href="#" class="btn btn-success"><i class="ri-file-word-2-line"></i> Xuất Excel</a>
+                <a href="export_pdf_chunhiem.php" class="btn btn-success"><i class="ri-file-word-2-line"></i> Xuất PDF</a>
               </div>
             </h5>
             <table class="table">
