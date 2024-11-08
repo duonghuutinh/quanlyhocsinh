@@ -5,13 +5,13 @@
 
   <li class="nav-item">
     <a class="nav-link " href="index.php">
-      <i class="bi bi-grid"></i>
+      <i class="ri-home-2-line"></i>
       <span>Trang chủ</span>
     </a>
   </li><!-- End Dashboard Nav -->
   <li class="nav-item">
     <a class="nav-link " href="namhoc.php">
-      <i class="bi bi-grid"></i>
+      <i class="ri-calendar-line"></i>
       <span>Năm Học</span>
     </a>
   </li><!-- End Dashboard Nav -->
@@ -25,7 +25,7 @@
 
   <li class="nav-item">
     <a class="nav-link collapsed" href="chunhiem.php">
-      <i class="ri-admin-line"></i>
+      <i class="ri-user-follow-line"></i>
       <span>Chủ nhiệm</span>
     </a>
   </li><!-- End Profile Page Nav -->
@@ -46,21 +46,21 @@
 
   <li class="nav-item">
     <a class="nav-link collapsed" href="phonghoc.php">
-      <i class="bi bi-person"></i>
+      <i class="ri-layout-4-line"></i>
       <span>Phòng Học</span>
     </a>
   </li><!-- End Profile Page Nav -->
 
   <li class="nav-item">
     <a class="nav-link collapsed" href="phonglop.php">
-      <i class="bi bi-person"></i>
+      <i class="ri-microsoft-line"></i>
       <span>Phòng Lớp</span>
     </a>
   </li><!-- End Profile Page Nav -->
 
   <li class="nav-item">
     <a class="nav-link collapsed" href="monhoc.php">
-      <i class="ri-building-4-line"></i>
+      <i class="ri-book-open-line"></i>
       <span>Môn học</span>
     </a>
   </li><!-- End Profile Page Nav -->

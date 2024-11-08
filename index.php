@@ -23,7 +23,7 @@ include('partials/sidebar.php');
                           <h5 class="card-title">Giáo viên</h5>
                           <div class="d-flex align-items-center">
                               <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                  <i class="bi bi-cart"></i>
+                                  <i class="ri-admin-line"></i>
                               </div>
                               <div class="ps-3">
                                   <h6>145</h6>
@@ -39,7 +39,7 @@ include('partials/sidebar.php');
                           <h5 class="card-title">Chủ nhiệm</h5>
                           <div class="d-flex align-items-center">
                               <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                  <i class="bi bi-currency-dollar"></i>
+                                  <i class="ri-user-follow-line"></i>
                               </div>
                               <div class="ps-3">
                                   <h6>$3,264</h6>
@@ -55,7 +55,7 @@ include('partials/sidebar.php');
                           <h5 class="card-title">Học Sinh</h5>
                           <div class="d-flex align-items-center">
                               <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                  <i class="bi bi-currency-dollar"></i>
+                                  <i class="ri-team-line"></i>
                               </div>
                               <div class="ps-3">
                                   <h6>$3,264</h6>
@@ -71,7 +71,7 @@ include('partials/sidebar.php');
                           <h5 class="card-title">Lớp</h5>
                           <div class="d-flex align-items-center">
                               <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                  <i class="bi bi-currency-dollar"></i>
+                                  <i class="ri-building-4-line"></i>
                               </div>
                               <div class="ps-3">
                                   <h6>$3,264</h6>
@@ -88,7 +88,7 @@ include('partials/sidebar.php');
                         <h5 class="card-title">Phòng Học</h5>
                         <div class="d-flex align-items-center">
                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                <i class="bi bi-cart"></i>
+                                <i class="ri-layout-4-line"></i>
                             </div>
                             <div class="ps-3">
                                 <h6>145</h6>
@@ -104,7 +104,7 @@ include('partials/sidebar.php');
                         <h5 class="card-title">Phòng Lớp</h5>
                         <div class="d-flex align-items-center">
                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                <i class="bi bi-currency-dollar"></i>
+                                <i class="ri-microsoft-line"></i>
                             </div>
                             <div class="ps-3">
                                 <h6>$3,264</h6>
@@ -120,7 +120,7 @@ include('partials/sidebar.php');
                         <h5 class="card-title">Môn Học</h5>
                         <div class="d-flex align-items-center">
                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                <i class="bi bi-currency-dollar"></i>
+                                <i class="ri-book-open-line"></i>
                             </div>
                             <div class="ps-3">
                                 <h6>$3,264</h6>
@@ -135,7 +135,7 @@ include('partials/sidebar.php');
                         <h5 class="card-title">Điểm</h5>
                         <div class="d-flex align-items-center">
                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                <i class="bi bi-currency-dollar"></i>
+                                <i class="ri-clipboard-line"></i>
                             </div>
                             <div class="ps-3">
                                 <h6>$3,264</h6>

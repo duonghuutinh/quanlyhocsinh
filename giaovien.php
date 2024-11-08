@@ -24,33 +24,57 @@ include('partials/connectDB.php');
         <div class="card">
           <div class="card-body">
             <h5 class="card-title d-flex justify-content-between align-items-center">
-              
+
               <!-- Group buttons and search form in the same row -->
               <div class="d-flex align-items-center w-100 ">
                 <!-- Add and Export PDF buttons -->
                 <a href="add_giaovien.php" class="btn btn-primary me-2">Thêm</a>
-                <a href="export_pdf_giaovien.php" class="btn btn-success me-4 "><i class="ri-file-word-2-line"></i>Xuất PDF</a>
+                <a href="export_pdf_giaovien.php" class="btn btn-success me-4 "><i class="ri-file-pdf-line"></i>Xuất PDF</a>
                 <!-- Search Form -->
-                <form method="GET" action="" class="d-flex align-items-center mt-3 w-50 ">
-                  <div class="me-2" style="flex: 1;">
-                    <select name="column" class="form-select">
-                      <option value="">Tất cả</option>
-                      <option value="maGV">Mã Giáo Viên</option>
-                      <option value="hoTen">Họ và tên</option>
-                      <option value="gioiTinh">Giới tính</option>
-                      <option value="ngaySinh">Ngày sinh</option>
-                      <option value="SDT">Số điện thoại</option>
-                      <option value="email">Email</option>
-                      <option value="diaChi">Địa chỉ</option>
-                    </select>
-                  </div>
-                  <div class="me-2" style="flex: 1;">
-                    <input type="text" name="keyword" class="form-control" placeholder="Nhập từ khóa tìm kiếm">
-                  </div>
-                  <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-                </form>
               </div>
+
             </h5>
+   <div class="row">
+   <form method="GET" action="" class="d-flex align-items-center  w-50 ">
+              <div class="me-2" style="flex: 1;">
+                <select name="column" class="form-select">
+                  <option value="">Tất cả</option>
+                  <option value="maGV">Mã Giáo Viên</option>
+                  <option value="hoTen">Họ và tên</option>
+                  <option value="gioiTinh">Giới tính</option>
+                  <option value="ngaySinh">Ngày sinh</option>
+                  <option value="SDT">Số điện thoại</option>
+                  <option value="email">Email</option>
+                  <option value="diaChi">Địa chỉ</option>
+                </select>
+              </div>
+              <div class="me-2" style="flex: 1;">
+                <input type="text" name="keyword" class="form-control" placeholder="Nhập từ khóa tìm kiếm">
+              </div>
+              <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+            </form>
+            <form method="GET" action="" class="d-flex align-items-center  w-50">
+              <div class="me-2" style="flex: 1;">
+                <select name="column" class="form-select">
+                  <option value="">Chọn cột sắp xếp</option>
+                  <option value="maGV">Mã Giáo Viên</option>
+                  <option value="hoTen">Họ và tên</option>
+                  <option value="gioiTinh">Giới tính</option>
+                  <option value="ngaySinh">Ngày sinh</option>
+                  <option value="SDT">Số điện thoại</option>
+                  <option value="email">Email</option>
+                  <option value="diaChi">Địa chỉ</option>
+                </select>
+              </div>
+              <div class="me-2" style="flex: 1;">
+                <select name="order" class="form-select">
+                  <option value="asc">Tăng dần</option>
+                  <option value="desc">Giảm dần</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary">Sắp xếp</button>
+            </form>
+   </div>
 
             <!-- Search Form -->
             <table class="table table-bordered">
@@ -70,21 +94,21 @@ include('partials/connectDB.php');
 
               <tbody>
                 <?php
+                // Kiểm tra và tạo SQL cho việc tìm kiếm
                 $sql = "SELECT * FROM giaovien";
 
-                // Check if search parameters are provided
-                if (isset($_GET['column']) && isset($_GET['keyword'])) {
+                // Thêm phần tìm kiếm vào SQL nếu có
+                if (isset($_GET['keyword']) && $_GET['keyword'] != "") {
                   $column = $_GET['column'];
                   $keyword = $_GET['keyword'];
                   $searchTerm = "%" . $keyword . "%";
 
-                  // Modify SQL query based on column selection
                   if ($column) {
                     $sql .= " WHERE $column LIKE ?";
                     $stmt = $conn->prepare($sql);
                     $stmt->bind_param("s", $searchTerm);
                   } else {
-                    // Search across all relevant columns
+                    // Tìm kiếm trong nhiều cột
                     $sql .= " WHERE maGV LIKE ? OR hoTen LIKE ? OR gioiTinh LIKE ? OR ngaySinh LIKE ? OR SDT LIKE ? OR email LIKE ? OR diaChi LIKE ?";
                     $stmt = $conn->prepare($sql);
                     $stmt->bind_param("sssssss", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm);
@@ -93,8 +117,17 @@ include('partials/connectDB.php');
                   $stmt = $conn->prepare($sql);
                 }
 
+                // Thêm sắp xếp nếu có
+                if (isset($_GET['column']) && isset($_GET['order']) && in_array($_GET['column'], ['maGV', 'hoTen', 'gioiTinh', 'ngaySinh', 'SDT', 'email', 'diaChi'])) {
+                  $column = $_GET['column'];
+                  $order = $_GET['order'];
+                  $sql .= " ORDER BY $column $order";
+                  $stmt = $conn->prepare($sql);
+                }
+
                 $stmt->execute();
                 $result = $stmt->get_result();
+
 
                 if ($result->num_rows > 0) {
                   $stt = 1;
