@@ -175,3 +175,5 @@ include('partials/connectDB.php');
   }
   ?>
 </main><!-- End #main -->
+<?php
+include('partials/footer.php');

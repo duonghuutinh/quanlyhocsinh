@@ -43,7 +43,7 @@ session_start(); // Start the session to access session variables
 <header id="header" class="header fixed-top d-flex align-items-center">
 
 <div class="d-flex align-items-center justify-content-between">
-  <a href="index.html" class="logo d-flex align-items-center">
+  <a href="index.php" class="logo d-flex align-items-center">
     <img src="assets/img/logo.png" alt="">
     <span class="d-none d-lg-block">SmartAdmin</span>
   </a>
@@ -72,7 +72,7 @@ session_start(); // Start the session to access session variables
         <?php if (isset($_SESSION['username'])): ?>
           <span class="d-none d-md-block dropdown-toggle ps-2"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
         <?php else: ?>
-          <span class="d-none d-md-block dropdown-toggle ps-2">Lôi</span>
+          <span class="d-none d-md-block dropdown-toggle ps-2">Chưa đăng nhập</span>
         <?php endif; ?>
       </a><!-- End Profile Image Icon -->
 

@@ -62,7 +62,7 @@ $conn->close();
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Pages / Register - NiceAdmin Bootstrap Template</title>
+  <title>Đăng Ký</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -114,8 +114,8 @@ $conn->close();
                             <div class="card-body">
 
                                 <div class="pt-4 pb-2">
-                                    <h5 class="card-title text-center pb-0 fs-4">Create an Account</h5>
-                                    <p class="text-center small">Enter your personal details to create account</p>
+                                    <h5 class="card-title text-center pb-0 fs-4">Đăng Ký</h5>
+                                   
                                 </div>
 
                                 <!-- Hiển thị thông báo lỗi nếu có -->
@@ -127,44 +127,44 @@ $conn->close();
 
                                 <form class="row g-3 needs-validation" action="dangky.php" method="POST" novalidate>
                                     <div class="col-12">
-                                        <label for="yourName" class="form-label">Your Name</label>
+                                        <label for="yourName" class="form-label">Họ và tên</label>
                                         <input type="text" name="name" class="form-control" id="yourName" value="<?php echo $name_value; ?>" required>
-                                        <div class="invalid-feedback">Please, enter your name!</div>
+                                        <div class="invalid-feedback">Vui lòng, nhập vào họ và tên!</div>
                                     </div>
 
                                     <div class="col-12">
-                                        <label for="yourEmail" class="form-label">Your Email</label>
+                                        <label for="yourEmail" class="form-label">Email</label>
                                         <input type="email" name="email" class="form-control" id="yourEmail" value="<?php echo $email_value; ?>" required>
-                                        <div class="invalid-feedback">Please enter a valid Email address!</div>
+                                        <div class="invalid-feedback">Vui lòng nhập vào địa chỉ email!</div>
                                     </div>
 
                                     <div class="col-12">
-                                        <label for="yourUsername" class="form-label">Username</label>
+                                        <label for="yourUsername" class="form-label">Tài khoản</label>
                                         <div class="input-group has-validation">
                                             <span class="input-group-text" id="inputGroupPrepend">@</span>
                                             <input type="text" name="username" class="form-control" id="yourUsername" value="<?php echo $username_value; ?>" required>
-                                            <div class="invalid-feedback">Please choose a username.</div>
+                                            <div class="invalid-feedback">Vui lòng nhập vào tài khoản.</div>
                                         </div>
                                     </div>
 
                                     <div class="col-12">
-                                        <label for="yourPassword" class="form-label">Password</label>
+                                        <label for="yourPassword" class="form-label">Mật khẩu</label>
                                         <input type="password" name="password" class="form-control" id="yourPassword" required>
-                                        <div class="invalid-feedback">Please enter your password!</div>
+                                        <div class="invalid-feedback">Vui lòng, nhập vào mật khẩu!</div>
                                     </div>
 
                                     <div class="col-12">
                                         <div class="form-check">
                                             <input class="form-check-input" name="terms" type="checkbox" value="" id="acceptTerms" required>
-                                            <label class="form-check-label" for="acceptTerms">I agree and accept the <a href="#">terms and conditions</a></label>
-                                            <div class="invalid-feedback">You must agree before submitting.</div>
+                                            <label class="form-check-label" for="acceptTerms">Tôi đồng ý và chấp nhận các <a href="#">điều khoản và điều kiện.</a></label>
+                                            <div class="invalid-feedback">Bạn phải đồng ý trước khi gửi.</div>
                                         </div>
                                     </div>
                                     <div class="col-12">
-                                        <button class="btn btn-primary w-100" type="submit">Create Account</button>
+                                        <button class="btn btn-primary w-100" type="submit">Đăng ký</button>
                                     </div>
                                     <div class="col-12">
-                                        <p class="small mb-0">Already have an account? <a href="dangnhap.php">Log in</a></p>
+                                        <p class="small mb-0">Đã có tài khoản? <a href="dangnhap.php">Đăng nhập</a></p>
                                     </div>
                                 </form>
 
@@ -172,7 +172,7 @@ $conn->close();
                         </div>
 
                         <div class="credits">
-                            Designed by <a href="">Nhóm_09</a>
+                            Thiết kế bởi <a href="">Nhóm_09</a>
                         </div>
 
                     </div>

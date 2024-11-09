@@ -2,10 +2,10 @@
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer">
     <div class="copyright">
-      &copy; Copyright <strong><span>SmartAdmin</span></strong>. All Rights Reserved
+      &copy; Bản quyền <strong><span>SmartAdmin</span></strong>. Đã đăng ký bản quyền
     </div>
     <div class="credits">
-      Designed by <a href="https://www.facebook.com/dht987">Nhóm_09</a>
+      Thiết kế bởi <a href="https://www.facebook.com/dht987">Nhóm_09</a>
     </div>
   </footer><!-- End Footer -->
 

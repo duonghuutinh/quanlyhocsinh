@@ -27,11 +27,11 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['maNam
 
 <main id="main" class="main">
   <div class="pagetitle">
-    <h1>Giáo Viên</h1>
+    <h1>Năm Học</h1>
     <nav>
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-        <li class="breadcrumb-item active">Giáo viên</li>
+        <li class="breadcrumb-item"><a href="index.php">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Danh sách năm học</li>
       </ol>
     </nav>
   </div><!-- End Page Title -->

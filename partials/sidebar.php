@@ -4,13 +4,13 @@
 <ul class="sidebar-nav" id="sidebar-nav">
 
   <li class="nav-item">
-    <a class="nav-link " href="index.php">
+    <a class="nav-link collapsed" href="index.php">
       <i class="ri-home-2-line"></i>
       <span>Trang chủ</span>
     </a>
   </li><!-- End Dashboard Nav -->
   <li class="nav-item">
-    <a class="nav-link " href="namhoc.php">
+    <a class="nav-link collapsed" href="namhoc.php">
       <i class="ri-calendar-line"></i>
       <span>Năm Học</span>
     </a>
@@ -57,20 +57,5 @@
       <span>Phòng Lớp</span>
     </a>
   </li><!-- End Profile Page Nav -->
-
-  <li class="nav-item">
-    <a class="nav-link collapsed" href="monhoc.php">
-      <i class="ri-book-open-line"></i>
-      <span>Môn học</span>
-    </a>
-  </li><!-- End Profile Page Nav -->
-
-  <li class="nav-item">
-    <a class="nav-link collapsed" href="diem.php">
-      <i class="ri-clipboard-line"></i>
-      <span>Điểm</span>
-    </a>
-  </li><!-- End Profile Page Nav -->
-
 </ul>
 </aside><!-- End Sidebar-->
