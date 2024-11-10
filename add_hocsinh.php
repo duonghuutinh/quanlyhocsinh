@@ -22,9 +22,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Kiểm tra nếu mã học sinh đã tồn tại
     $check_query = "SELECT maHS FROM hocsinh WHERE maHS = ?";
     $check_stmt = $conn->prepare($check_query);
-    if (!$check_stmt) {
-        die("Lỗi chuẩn bị câu lệnh: " . $conn->error);
-    }
     $check_stmt->bind_param("s", $maHS);
     $check_stmt->execute();
     $check_result = $check_stmt->get_result();
@@ -32,29 +29,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($check_result->num_rows > 0) {
         echo "<script>alert('Mã Học Sinh đã tồn tại. Vui lòng nhập mã khác.'); window.location.href = 'add_hocsinh.php';</script>";
     } else {
-        // Thêm học sinh mới nếu không trùng mã
-        $sql = "INSERT INTO hocsinh (maHS, hoTen, gioiTinh, ngaySinh, diaChi, sdtPH, maLop) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
+        // Lấy số lượng học sinh trong lớp hiện tại
+        $checkStudentQuery = $conn->prepare("SELECT COUNT(*) AS soSinhVien FROM hocSinh WHERE maLop = ?");
+        $checkStudentQuery->bind_param("s", $maLop);
+        $checkStudentQuery->execute();
+        $studentResult = $checkStudentQuery->get_result();
+        $studentRow = $studentResult->fetch_assoc();
+        $soSinhVien = $studentRow['soSinhVien']; // Số lượng học sinh trong lớp
 
-        if ($stmt === false) {
-            die("Lỗi chuẩn bị câu lệnh: " . $conn->error);
-        }
+        // Lấy số chỗ tối đa của phòng học qua bảng phonglop
+        $checkRoomCapacityQuery = $conn->prepare("SELECT ph.soChoToiDa 
+                                                   FROM phonglop pl 
+                                                   JOIN phonghoc ph ON pl.maPhong = ph.maPhong 
+                                                   WHERE pl.maLop = ? AND pl.maPhong = ?");
+        $checkRoomCapacityQuery->bind_param("ss", $maLop, $maPhong_new);
+        $checkRoomCapacityQuery->execute();
+        $roomCapacityResult = $checkRoomCapacityQuery->get_result();
+        $roomCapacityRow = $roomCapacityResult->fetch_assoc();
+        $soChoToiDa = $roomCapacityRow['soChoToiDa']; // Số chỗ tối đa của phòng học
 
-        $stmt->bind_param("sssssss", $maHS, $hoTen, $gioiTinh, $ngaySinh, $diaChi, $sdtPH, $maLop);
-
-        if ($stmt->execute()) {
-            echo "<script>alert('Thêm Học Sinh thành công!'); window.location.href = 'hocsinh.php';</script>";
+        // Kiểm tra nếu số lượng học sinh vượt quá số chỗ tối đa của phòng học
+        if ($soSinhVien > $soChoToiDa) {
+            echo "<script>alert('Lớp đã đầy! Vui lòng chọn lớp khác.');window.location.href = 'add_hocsinh.php';</script>";
         } else {
-            echo "Lỗi khi thêm Học Sinh: " . $stmt->error;
+            // Thêm học sinh mới nếu không trùng mã
+            $sql = "INSERT INTO hocsinh (maHS, hoTen, gioiTinh, ngaySinh, diaChi, sdtPH, maLop) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("sssssss", $maHS, $hoTen, $gioiTinh, $ngaySinh, $diaChi, $sdtPH, $maLop);
+
+            if ($stmt->execute()) {
+                echo "<script>alert('Thêm Học Sinh thành công!'); window.location.href = 'hocsinh.php';</script>";
+            } else {
+                echo "Lỗi khi thêm Học Sinh: " . $stmt->error;
+            }
+
+            $stmt->close();
         }
 
-        $stmt->close();
+        $check_stmt->close();
     }
 
-    $check_stmt->close();
     $conn->close();
 }
 ?>
+
 <main id="main" class="main">
     <div class="pagetitle">
         <h1>Học Sinh</h1>
@@ -131,9 +149,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     </select>
                                 </div>
                             </div>
-
-                       
-
 
                             <!-- Ngày Sinh -->
                             <div class="row mb-3">

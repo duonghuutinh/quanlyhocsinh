@@ -37,7 +37,7 @@ include('partials/connectDB.php');
                                   <option value="">Tất cả</option>
                                   <option value="maPhong">Mã phòng</option>
                                   <option value="soPhong">Số phòng</option>
-                                  <option value="soChoToiDa">Số ngồi tối đa</option>
+                                  <option value="soChoToiDa">Số chỗ tối đa</option>
                                 </select>
                               </div>
                               <div class="me-2" style="flex: 1;">
@@ -51,7 +51,7 @@ include('partials/connectDB.php');
                                   <option value="">Chọn cột sắp xếp</option>
                                   <option value="maPhong">Mã phòng</option>
                                   <option value="soPhong">Số phòng</option>
-                                  <option value="soChoToiDa">Số ngồi tối đa</option>
+                                  <option value="soChoToiDa">Số chỗ tối đa</option>
                                 </select>
                               </div>
                               <div class="me-2" style="flex: 1;">
@@ -69,7 +69,7 @@ include('partials/connectDB.php');
                                   <th scope="col">STT</th>
                                   <th scope="col">Mã phòng</th>
                                   <th scope="col">Số phòng</th>
-                                  <th scope="col">Số ngồi tối đa</th>
+                                  <th scope="col">Số chỗ tối đa</th>
                                   <th scope="col">Thao tác</th>
                           </thead>
                           <tbody>

@@ -37,6 +37,7 @@ include('partials/connectDB.php');
                     <option value="">Tất cả</option>
                     <option value="maPhong">Số phòng</option>
                     <option value="tenLop">Lớp</option>
+                    <option value="maNamHoc">Năm học</option>
                   
                   </select>
                 </div>
@@ -51,6 +52,7 @@ include('partials/connectDB.php');
                     <option value="">Chọn cột sắp xếp</option>
                     <option value="maPhong">Số phòng</option>
                     <option value="tenLop">Lớp</option>
+                    <option value="maNamHoc">Năm học</option>
                    
                   </select>
                 </div>
