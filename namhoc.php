@@ -49,7 +49,38 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['maNam
                 <a href="export_pdf_namhoc.php" class="btn btn-success"><i class="ri-file-word-2-line"></i> Xuất PDF</a>
               </div>
             </h5>
-            <table class="table">
+            <div class="row">
+              <form method="GET" action="" class="d-flex align-items-center  w-50 ">
+                <div class="me-2" style="flex: 1;">
+                  <select name="column" class="form-select">
+                    <option value="">Tất cả</option>
+                    <option value="maNamHoc">Năm học</option>
+                    <option value="nienKhoa">Niên khoá</option>
+                  </select>
+                </div>
+                <div class="me-2" style="flex: 1;">
+                  <input type="text" name="keyword" class="form-control" placeholder="Nhập từ khóa tìm kiếm">
+                </div>
+                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+              </form>
+              <form method="GET" action="" class="d-flex align-items-center  w-50">
+                <div class="me-2" style="flex: 1;">
+                  <select name="column" class="form-select">
+                    <option value="">Chọn cột sắp xếp</option>
+                    <option value="maNamHoc">Năm học</option>
+                    <option value="nienKhoa">Niên khoá</option>
+                  </select>
+                </div>
+                <div class="me-2" style="flex: 1;">
+                  <select name="order" class="form-select">
+                    <option value="asc">Tăng dần</option>
+                    <option value="desc">Giảm dần</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Sắp xếp</button>
+              </form>
+            </div>
+            <table class="table table-bordered">
               <thead>
                 <tr>
                   <th scope="col">STT</th>
