@@ -31,7 +31,7 @@ include('partials/connectDB.php');
                 <a href="export_pdf_lop.php" class="btn btn-success"><i class="ri-file-word-2-line"></i> Xuất PDF</a>
               </div>
             </h5>
-            <table class="table">
+            <table class="table table-bordered ">
               <thead>
                 <tr>
                   <th scope="col">ID</th>
@@ -67,8 +67,8 @@ include('partials/connectDB.php');
                           <th scope='row'>{$stt}</th>
                           <td>{$row['tenLop']}</td>
                           <td>{$row['soHocSinh']}</td>
-                          <td>{$row['phongHoc']}</td>
-                          <td>{$row['giaoVienChuNhiem']}</td>                         
+                          <td>" . (!empty($row['phongHoc']) ? $row['phongHoc'] : 'Chưa có phòng') . "</td>
+                         <td>" . (!empty($row['giaoVienChuNhiem']) ? $row['giaoVienChuNhiem'] : 'Chưa có chủ nhiệm') . "</td> 
                           <td>{$row['nienKhoa']}</td>  <!-- Hiển thị niên khóa -->
                           <td>
                              <a href='edit_lop.php?maLop=" . $row['maLop'] . "' class='btn btn-success'><i class='bi bi-pencil-square'></i></a>

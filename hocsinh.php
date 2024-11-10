@@ -30,14 +30,58 @@ include('partials/connectDB.php');
                 <a href="export_pdf_hocsinh.php" class="btn btn-success"><i class="ri-file-word-2-line"></i> Xuất PDF</a>
               </div>
             </h5>
-            <table class="table">
+            <div class="row">
+              <form method="GET" action="" class="d-flex align-items-center  w-50 ">
+                <div class="me-2" style="flex: 1;">
+                  <select name="column" class="form-select">
+                    <option value="">Tất cả</option>
+                    <option value="maHS">Mã học sinh</option>
+                    <option value="hoTen">Họ và tên</option>
+                    <option value="gioiTinh">Giới tính</option>
+                    <option value="maLop">Lớp</option>
+                    <option value="nienKhoa">Niên khoá</option>
+                    <option value="ngaySinh">Ngày sinh</option>
+                    <option value="sdtPH">Số điện thoại phụ huynh</option>
+                    <option value="diaChi">Địa chỉ</option>
+                  </select>
+                </div>
+                <div class="me-2" style="flex: 1;">
+                  <input type="text" name="keyword" class="form-control" placeholder="Nhập từ khóa tìm kiếm">
+                </div>
+                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+              </form>
+              <form method="GET" action="" class="d-flex align-items-center  w-50">
+                <div class="me-2" style="flex: 1;">
+                  <select name="column" class="form-select">
+                    <option value="">Chọn cột sắp xếp</option>
+                    <option value="maHS">Mã học sinh</option>
+                    <option value="hoTen">Họ và tên</option>
+                    <option value="gioiTinh">Giới tính</option>
+                    <option value="maLop">Lớp</option>
+                    <option value="nienKhoa">Niên khoá</option>
+                    <option value="ngaySinh">Ngày sinh</option>
+                    <option value="sdtPH">Số điện thoại phụ huynh</option>
+                    <option value="diaChi">Địa chỉ</option>
+                  </select>
+                </div>
+                <div class="me-2" style="flex: 1;">
+                  <select name="order" class="form-select">
+                    <option value="asc">Tăng dần</option>
+                    <option value="desc">Giảm dần</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Sắp xếp</button>
+              </form>
+            </div>
+            <table class="table table-bordered">
               <thead>
                 <tr>
-                  <th scope="col">ID</th>
+                  <th scope="col">STT</th>
                   <th scope="col">Mã học sinh</th>
                   <th scope="col">Họ và tên</th>
                   <th scope="col">Giới Tính</th>
                   <th scope="col">Lớp</th>
+                  <th scope="col">Niên khoá</th>
                   <th scope="col">Ngày sinh</th>
                   <th scope="col">Số điện thoại</th>
                   <th scope="col">Địa chỉ</th>
@@ -45,38 +89,43 @@ include('partials/connectDB.php');
               </thead>
 
               <tbody>
-                <?php
-                
-                  $sql = "SELECT hocsinh.*, lop.tenLop 
-                  FROM hocsinh 
-                  JOIN lop ON hocsinh.maLop = lop.maLop;
-                  "; 
-                   
-                $result = $conn->query($sql);
-                if ($result->num_rows > 0) {
-                  $stt = 1;
-                  while ($row = $result->fetch_assoc()) {
-                    echo "<tr>
-                    <th scope='row'>{$stt}</th>
-                    <td>" . (isset($row['maHS']) ? $row['maHS'] : 'N/A') . "</td> <!-- Kiểm tra tồn tại -->
-                    <td>" . (isset($row['hoTen']) ? $row['hoTen'] : 'N/A') . "</td> <!-- Kiểm tra tồn tại -->
-                    <td>" . (isset($row['gioiTinh']) ? $row['gioiTinh'] : 'N/A') . "</td> <!-- Kiểm tra tồn tại -->
-                    <td>" . (isset($row['tenLop']) ? $row['tenLop'] : 'N/A') . "</td> <!-- Kiểm tra tồn tại -->
-                    <td>" . (isset($row['ngaySinh']) ? $row['ngaySinh'] : 'N/A') . "</td> <!-- Kiểm tra tồn tại -->
-                    <td>" . (isset($row['sdtPH']) ? $row['sdtPH'] : 'N/A') . "</td> <!-- Kiểm tra tồn tại -->
-                    <td>" . (isset($row['diaChi']) ? $row['diaChi'] : 'N/A') . "</td> <!-- Kiểm tra tồn tại -->
-                    <td>
-                       <a href='edit_hocsinh.php?maHS=" . $row['maHS'] . "' class='btn btn-success'><i class='bi bi-pencil-square'></i></a>
-                        <a href='hocsinh.php?delete=true&maHS=" . $row['maHS'] . "' class='btn btn-danger' onclick='return confirm(\"Bạn có chắc chắn muốn xóa?\")'><i class='bi bi-trash'></i></a>
-                    </td>
-                    </tr>";
-                    $stt++;
-                  }
-                } else {
-                  echo "<tr><td colspan='6' class='text-center'>Không có dữ liệu nào</td></tr>";
-                }
-                ?>
-              </tbody>
+  <?php
+  $sql = "SELECT hocsinh.*, lop.tenLop, namhoc.nienKhoa
+          FROM hocsinh
+          JOIN lop ON hocsinh.maLop = lop.maLop
+          JOIN namhoc ON lop.maNamHoc = namhoc.maNamHoc";
+
+  $result = $conn->query($sql);
+  if ($result->num_rows > 0) {
+    $stt = 1;
+    while ($row = $result->fetch_assoc()) {
+      echo "<tr>
+        <th scope='row'>{$stt}</th>
+        <td>" . (isset($row['maHS']) ? $row['maHS'] : 'N/A') . "</td>
+        <td>" . (isset($row['hoTen']) ? $row['hoTen'] : 'N/A') . "</td>
+        <td>" . (isset($row['gioiTinh']) ? $row['gioiTinh'] : 'N/A') . "</td>
+        <td>" . (isset($row['tenLop']) ? $row['tenLop'] : 'N/A') . "</td>
+        <td>" . (isset($row['nienKhoa']) ? $row['nienKhoa'] : 'N/A') . "</td>
+        <td>" . (isset($row['ngaySinh']) ? $row['ngaySinh'] : 'N/A') . "</td>
+        <td>" . (isset($row['sdtPH']) ? $row['sdtPH'] : 'N/A') . "</td>
+        <td>" . (isset($row['diaChi']) ? $row['diaChi'] : 'N/A') . "</td>
+        <td>
+          <a href='edit_hocsinh.php?maHS=" . $row['maHS'] . "&nienKhoa=" . $row['nienKhoa'] . "' class='btn btn-success'>
+            <i class='bi bi-pencil-square'></i>
+          </a>
+          <a href='hocsinh.php?delete=true&maHS=" . $row['maHS'] . "' class='btn btn-danger' onclick='return confirm(\"Bạn có chắc chắn muốn xóa?\")'>
+            <i class='bi bi-trash'></i>
+          </a>
+        </td>
+      </tr>";
+      $stt++;
+    }
+  } else {
+    echo "<tr><td colspan='10' class='text-center'>Không có dữ liệu nào</td></tr>";
+  }
+  ?>
+</tbody>
+
 
 
             </table>
@@ -91,17 +140,17 @@ include('partials/connectDB.php');
 </main><!-- End #main -->
 
 <?php
-  if (isset($_GET['delete']) && isset($_GET['maHS'])) {
-    $maHS = $_GET['maHS'];
-    // Thực hiện câu lệnh xóa
-    $query = "DELETE FROM hocsinh WHERE maHS = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("s", $maHS);
+if (isset($_GET['delete']) && isset($_GET['maHS'])) {
+  $maHS = $_GET['maHS'];
+  // Thực hiện câu lệnh xóa
+  $query = "DELETE FROM hocsinh WHERE maHS = ?";
+  $stmt = $conn->prepare($query);
+  $stmt->bind_param("s", $maHS);
 
-    if ($stmt->execute()) {
-      echo "<script>alert('Xoá thành công!'); window.location.href = 'hocsinh.php';</script>";
+  if ($stmt->execute()) {
+    echo "<script>alert('Xoá thành công!'); window.location.href = 'hocsinh.php';</script>";
   } else {
-      echo "Lỗi khi xoá học sinh: " . $stmt->error;
+    echo "Lỗi khi xoá học sinh: " . $stmt->error;
   }
 }
 ?>

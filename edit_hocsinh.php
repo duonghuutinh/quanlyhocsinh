@@ -1,11 +1,12 @@
-<?php  
+<?php
 include('partials/header.php');
 include('partials/sidebar.php');
 include('partials/connectDB.php');
 
-// Kiểm tra nếu `maHS` được truyền vào URL
-if (isset($_GET['maHS'])) {
+// Kiểm tra nếu `maHS` và `nienKhoa` được truyền vào URL
+if (isset($_GET['maHS']) && isset($_GET['nienKhoa'])) {
     $maHS = $_GET['maHS'];
+    $nienKhoa = $_GET['nienKhoa'];
 
     // Truy vấn thông tin học sinh từ cơ sở dữ liệu
     $query = "SELECT * FROM hocsinh WHERE maHS = ?";
@@ -19,16 +20,25 @@ if (isset($_GET['maHS'])) {
         echo "Không tìm thấy học sinh.";
         exit;
     }
-
-    // Truy vấn danh sách lớp để chọn lớp
-    $sql_lop = "SELECT maLop, tenLop FROM lop";
-    $result_lop = $conn->query($sql_lop);
 } else {
     echo "Mã học sinh không hợp lệ.";
     exit;
 }
 
-// Kiểm tra nếu form được submit để cập nhật thông tin
+// Lấy thông tin lớp và năm học của học sinh
+$sql_lop = "SELECT l.tenLop, l.maNamHoc FROM lop l WHERE l.maLop = ?";
+$stmt_lop = $conn->prepare($sql_lop);
+$stmt_lop->bind_param("s", $student['maLop']);
+$stmt_lop->execute();
+$result_lop = $stmt_lop->get_result();
+$row_lop = $result_lop->fetch_assoc();
+$maNamHoc = $row_lop['maNamHoc']; // Lấy mã năm học
+$tenLop = $row_lop['tenLop']; // Lấy tên lớp
+
+// Truy vấn danh sách năm học
+$sql_namhoc = "SELECT maNamHoc, nienKhoa FROM namhoc";
+$result_namhoc = $conn->query($sql_namhoc);
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $hoTen = $_POST['hoTen'];
     $gioiTinh = $_POST['gioiTinh'];
@@ -36,16 +46,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $diaChi = $_POST['diaChi'];
     $sdtPH = $_POST['sdtPH'];
     $maLop = $_POST['maLop'];
+    $maNamHoc = $_POST['maNamHoc'];
 
-    // Cập nhật thông tin học sinh
-    $update_query = "UPDATE hocsinh SET hoTen = ?, gioiTinh = ?, ngaySinh = ?, diaChi = ?, sdtPH = ?, maLop = ? WHERE maHS = ?";
-    $stmt = $conn->prepare($update_query);
-    $stmt->bind_param("sssssss", $hoTen, $gioiTinh, $ngaySinh, $diaChi, $sdtPH, $maLop, $maHS);
+    // Kiểm tra xem lớp có thuộc năm học đã chọn không
+    $sql_check_lop = "SELECT * FROM lop WHERE maLop = ? AND maNamHoc = ?";
+    $stmt_check_lop = $conn->prepare($sql_check_lop);
+    $stmt_check_lop->bind_param("ss", $maLop, $maNamHoc);
+    $stmt_check_lop->execute();
+    $result_check_lop = $stmt_check_lop->get_result();
 
-    if ($stmt->execute()) {
-        echo "<script>alert('Chỉnh sửa thông tin học sinh thành công!'); window.location.href = 'hocsinh.php';</script>";
+    if ($result_check_lop->num_rows > 0) {
+        // Cập nhật thông tin học sinh
+        $update_query = "UPDATE hocsinh SET hoTen = ?, gioiTinh = ?, ngaySinh = ?, diaChi = ?, sdtPH = ?, maLop = ? WHERE maHS = ?";
+        $stmt_update = $conn->prepare($update_query);
+        $stmt_update->bind_param("sssssss", $hoTen, $gioiTinh, $ngaySinh, $diaChi, $sdtPH, $maLop, $maHS);
+
+        if ($stmt_update->execute()) {
+            echo "<script>alert('Chỉnh sửa thông tin học sinh thành công!'); window.location.href = 'hocsinh.php';</script>";
+        } else {
+            echo "Lỗi khi cập nhật học sinh: " . $stmt_update->error;
+        }
     } else {
-        echo "Lỗi khi cập nhật học sinh: " . $stmt->error;
+        echo "<script>alert('Lớp không thuộc năm học đã chọn. Vui lòng chọn lớp khác.');</script>";
     }
 }
 ?>
@@ -94,20 +116,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         <option value="Khác" <?php if ($student['gioiTinh'] == "Khác") echo "selected"; ?>>Khác</option>
                                     </select>
                                 </div>
-                         </div>
+                            </div>
+
+                            <!-- Năm học -->
+                            <div class="row mb-3">
+                                <label for="maNamHoc" class="col-sm-2 col-form-label">Năm học</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" id="maNamHoc" name="maNamHoc" required>
+                                        <?php
+                                        while ($row = $result_namhoc->fetch_assoc()) {
+                                            $selected = ($row['maNamHoc'] == $maNamHoc) ? 'selected' : '';
+                                            echo "<option value='" . $row['maNamHoc'] . "' $selected>" . $row['nienKhoa'] . "</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+
                             <!-- Lớp -->
                             <div class="row mb-3">
                                 <label for="maLop" class="col-sm-2 col-form-label">Lớp</label>
-                                 <div class="col-sm-10">
-                                <select class="form-control" id="maLop" name="maLop" required>
-                                        <?php while ($row = $result_lop->fetch_assoc()): ?>
-                                                     <option value="<?php echo $row['maLop']; ?>" <?php if ($row['maLop'] == $student['maLop']) echo 'selected'; ?>>
-                                                                <?php echo $row['tenLop']; ?>
-                                                                        </option>
-                                                                    <?php endwhile; ?>
-                                                                </select>
-                                                            </div>
-                                                        </div>
+                                <div class="col-sm-10">
+                                    <select class="form-control" id="maLop" name="maLop" required>
+                                        <!-- Hiển thị lớp hiện tại của học sinh và loại bỏ nó khỏi danh sách lớp -->
+                                        <option value=''>Chọn Lớp</option>
+                                        <option value="<?php echo $student['maLop']; ?>" selected><?php echo $tenLop; ?></option>
+                                        
+                                        <?php
+                                        // Truy vấn để lấy danh sách lớp thuộc năm học đã chọn
+                                        $sql_lop = "SELECT maLop, tenLop FROM lop WHERE maNamHoc = ?";
+                                        $stmt_lop = $conn->prepare($sql_lop);
+                                        $stmt_lop->bind_param("s", $maNamHoc);
+                                        $stmt_lop->execute();
+                                        $result_lop = $stmt_lop->get_result();
+                                        while ($row = $result_lop->fetch_assoc()) {
+                                            // Kiểm tra nếu lớp hiện tại không phải là lớp của học sinh
+                                            if ($row['maLop'] != $student['maLop']) {
+                                                echo "<option value='" . $row['maLop'] . "'>" . $row['tenLop'] . "</option>";
+                                            }
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+
 
                             <div class="row mb-3">
                                 <label for="ngaySinh" class="col-sm-2 col-form-label">Ngày Sinh</label>
@@ -130,14 +182,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 </div>
                             </div>
 
-                         
                             <div class="row mb-3">
                                 <div class="col-sm-10 offset-sm-2">
                                     <button type="submit" class="btn btn-primary">Cập Nhật</button>
                                 </div>
                             </div>
                         </form><!-- End Biểu mẫu sửa học sinh -->
-
                     </div>
                 </div>
             </div>
@@ -145,4 +195,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </section>
 </main><!-- End #main -->
 
-<?php include('partials/footer.php'); ?>
+<script>
+    document.getElementById("maNamHoc").addEventListener("change", function() {
+        const maNamHoc = this.value;
+        fetchClasses(maNamHoc); // Gọi hàm cập nhật danh sách lớp
+    });
+
+    function fetchClasses(maNamHoc) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "get_lop.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                const response = xhr.responseText;
+                const classSelect = document.getElementById("maLop");
+                classSelect.innerHTML = response; // Cập nhật lại danh sách lớp
+            }
+        };
+        xhr.send("maNamHoc=" + encodeURIComponent(maNamHoc));
+    }
+</script>
+
+<?php
+include('partials/footer.php');
+?>

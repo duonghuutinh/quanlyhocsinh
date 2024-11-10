@@ -1,7 +1,8 @@
 <?php
-session_start(); // Start the session to access session variables
-// Sau khi xác thực người dùng thành công
-
+// Kiểm tra nếu phiên chưa được bắt đầu thì khởi động phiên
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 ?>
 <head>
   <meta charset="utf-8">

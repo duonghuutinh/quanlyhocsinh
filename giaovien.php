@@ -16,8 +16,6 @@ include('partials/connectDB.php');
   <div class="pagetitle">
     <h1>Danh sách giáo viên</h1>
   </div>
-
-
   <section class="section">
     <div class="row">
       <div class="col-lg-12">
@@ -34,47 +32,47 @@ include('partials/connectDB.php');
               </div>
 
             </h5>
-   <div class="row">
-   <form method="GET" action="" class="d-flex align-items-center  w-50 ">
-              <div class="me-2" style="flex: 1;">
-                <select name="column" class="form-select">
-                  <option value="">Tất cả</option>
-                  <option value="maGV">Mã Giáo Viên</option>
-                  <option value="hoTen">Họ và tên</option>
-                  <option value="gioiTinh">Giới tính</option>
-                  <option value="ngaySinh">Ngày sinh</option>
-                  <option value="SDT">Số điện thoại</option>
-                  <option value="email">Email</option>
-                  <option value="diaChi">Địa chỉ</option>
-                </select>
-              </div>
-              <div class="me-2" style="flex: 1;">
-                <input type="text" name="keyword" class="form-control" placeholder="Nhập từ khóa tìm kiếm">
-              </div>
-              <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-            </form>
-            <form method="GET" action="" class="d-flex align-items-center  w-50">
-              <div class="me-2" style="flex: 1;">
-                <select name="column" class="form-select">
-                  <option value="">Chọn cột sắp xếp</option>
-                  <option value="maGV">Mã Giáo Viên</option>
-                  <option value="hoTen">Họ và tên</option>
-                  <option value="gioiTinh">Giới tính</option>
-                  <option value="ngaySinh">Ngày sinh</option>
-                  <option value="SDT">Số điện thoại</option>
-                  <option value="email">Email</option>
-                  <option value="diaChi">Địa chỉ</option>
-                </select>
-              </div>
-              <div class="me-2" style="flex: 1;">
-                <select name="order" class="form-select">
-                  <option value="asc">Tăng dần</option>
-                  <option value="desc">Giảm dần</option>
-                </select>
-              </div>
-              <button type="submit" class="btn btn-primary">Sắp xếp</button>
-            </form>
-   </div>
+            <div class="row">
+              <form method="GET" action="" class="d-flex align-items-center  w-50 ">
+                <div class="me-2" style="flex: 1;">
+                  <select name="column" class="form-select">
+                    <option value="">Tất cả</option>
+                    <option value="maGV">Mã Giáo Viên</option>
+                    <option value="hoTen">Họ và tên</option>
+                    <option value="gioiTinh">Giới tính</option>
+                    <option value="ngaySinh">Ngày sinh</option>
+                    <option value="SDT">Số điện thoại</option>
+                    <option value="email">Email</option>
+                    <option value="diaChi">Địa chỉ</option>
+                  </select>
+                </div>
+                <div class="me-2" style="flex: 1;">
+                  <input type="text" name="keyword" class="form-control" placeholder="Nhập từ khóa tìm kiếm">
+                </div>
+                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+              </form>
+              <form method="GET" action="" class="d-flex align-items-center  w-50">
+                <div class="me-2" style="flex: 1;">
+                  <select name="column" class="form-select">
+                    <option value="">Chọn cột sắp xếp</option>
+                    <option value="maGV">Mã Giáo Viên</option>
+                    <option value="hoTen">Họ và tên</option>
+                    <option value="gioiTinh">Giới tính</option>
+                    <option value="ngaySinh">Ngày sinh</option>
+                    <option value="SDT">Số điện thoại</option>
+                    <option value="email">Email</option>
+                    <option value="diaChi">Địa chỉ</option>
+                  </select>
+                </div>
+                <div class="me-2" style="flex: 1;">
+                  <select name="order" class="form-select">
+                    <option value="asc">Tăng dần</option>
+                    <option value="desc">Giảm dần</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Sắp xếp</button>
+              </form>
+            </div>
 
             <!-- Search Form -->
             <table class="table table-bordered">
