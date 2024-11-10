@@ -99,18 +99,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </div>
                             </div>
 
-                            <!-- Lớp và niên khoá (Chỉ hiển thị, không chỉnh sửa) -->
                             <div class="row mb-3">
-                                <label for="maLop" class="col-sm-2 col-form-label">Lớp:</label>
+                                <label for="nienKhoa" class="col-sm-2 col-form-label">Năm học</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="maLop" value="<?php echo $tenLop; ?>" disabled />
+                                    <input type="text" class="form-control" id="nienKhoa" value="<?php echo $nienKhoa; ?>" disabled />
                                 </div>
                             </div>
 
+                            <!-- Lớp và niên khoá (Chỉ hiển thị, không chỉnh sửa) -->
                             <div class="row mb-3">
-                                <label for="nienKhoa" class="col-sm-2 col-form-label">Niên Khoá:</label>
+                                <label for="maLop" class="col-sm-2 col-form-label">Lớp</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="nienKhoa" value="<?php echo $nienKhoa; ?>" disabled />
+                                    <input type="text" class="form-control" id="maLop" value="<?php echo $tenLop; ?>" disabled />
                                 </div>
                             </div>
 

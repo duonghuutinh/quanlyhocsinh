@@ -86,32 +86,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                             </div>
 
-                            <div class="row mb-3">
-                                <label for="maLop" class="col-sm-2 col-form-label">Lớp</label>
+                           <!-- Năm học -->
+                           <div class="row mb-3">
+                                <label for="maNamHoc" class="col-sm-2 col-form-label">Năm học</label>
                                 <div class="col-sm-10">
-                                    <select class="form-control" id="maLop" name="maLop" required>
-                                        <option value="">Chọn Lớp</option>
-                                        <?php while($row = $result_lop->fetch_assoc()): ?>
-                                            <option value="<?php echo $row['maLop']; ?>"><?php echo $row['tenLop']; ?></option>
+                                    <select class="form-control" id="maNamHoc" name="maNamHoc" onchange="getClasses(this.value)">
+                                        <option value="">Chọn năm học</option>
+                                        <?php while ($row = $result_namhoc->fetch_assoc()): ?>
+                                            <option value="<?php echo $row['maNamHoc']; ?>" <?php echo (isset($_POST['maNamHoc']) && $_POST['maNamHoc'] == $row['maNamHoc']) ? 'selected' : ''; ?>>
+                                                <?php echo $row['nienKhoa']; ?>
+                                            </option>
                                         <?php endwhile; ?>
                                     </select>
                                 </div>
                             </div>
 
+                            <!-- Lớp -->
                             <div class="row mb-3">
-                                <label for="maNamHoc" class="col-sm-2 col-form-label">Năm Học</label>
+                                <label for="maLop" class="col-sm-2 col-form-label">Lớp</label>
                                 <div class="col-sm-10">
-                                    <select class="form-control" id="maNamHoc" name="maNamHoc" required>
-                                        <option value="">Chọn Năm Học</option>
-                                        <?php 
-                                        if ($result_namhoc->num_rows > 0) {
-                                            while($row = $result_namhoc->fetch_assoc()): ?>
-                                                <option value="<?php echo $row['maNamHoc']; ?>"><?php echo $row['nienKhoa']; ?></option>
-                                            <?php endwhile;
-                                        } else {
-                                            echo "<option value=''>Không có dữ liệu năm học</option>";
-                                        }
-                                        ?>
+                                    <select class="form-control" id="maLop" name="maLop" required>
+                                        <option value="">Chọn Lớp</option>
                                     </select>
                                 </div>
                             </div>
@@ -129,5 +124,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </section>
 </main><!-- End #main -->
+<script>
+document.getElementById("maNamHoc").addEventListener("change", function() {
+    const maNamHoc = this.value;
+    if (maNamHoc) {
+        fetchClasses(maNamHoc);
+    } else {
+        document.getElementById("maLop").innerHTML = "<option value=''>Chọn Lớp</option>";
+    }
+});
 
+function fetchClasses(maNamHoc) {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "get_lop.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            document.getElementById("maLop").innerHTML = xhr.responseText;
+        }
+    };
+    xhr.send("maNamHoc=" + encodeURIComponent(maNamHoc));
+}
+</script>
 <?php include('partials/footer.php'); ?>

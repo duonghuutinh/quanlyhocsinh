@@ -132,7 +132,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     </select>
                                 </div>
                             </div>
-
                             <!-- Lớp -->
                             <div class="row mb-3">
                                 <label for="maLop" class="col-sm-2 col-form-label">Lớp</label>
