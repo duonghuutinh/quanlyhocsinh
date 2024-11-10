@@ -31,39 +31,39 @@ include('partials/connectDB.php');
                               </div>                          
                           </h5>
                           <div class="row">
-              <form method="GET" action="" class="d-flex align-items-center  w-50 ">
-                <div class="me-2" style="flex: 1;">
-                  <select name="column" class="form-select">
-                    <option value="">Tất cả</option>
-                    <option value="maPhong">Mã phòng</option>
-                    <option value="soPhong">Số phòng</option>
-                    <option value="soChoToiDa">Số ngồi tối đa</option>
-                  </select>
-                </div>
-                <div class="me-2" style="flex: 1;">
-                  <input type="text" name="keyword" class="form-control" placeholder="Nhập từ khóa tìm kiếm">
-                </div>
-                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-              </form>
-              <form method="GET" action="" class="d-flex align-items-center  w-50">
-                <div class="me-2" style="flex: 1;">
-                  <select name="column" class="form-select">
-                    <option value="">Chọn cột sắp xếp</option>
-                    <option value="maPhong">Mã phòng</option>
-                    <option value="soPhong">Số phòng</option>
-                    <option value="soChoToiDa">Số ngồi tối đa</option>
-                  </select>
-                </div>
-                <div class="me-2" style="flex: 1;">
-                  <select name="order" class="form-select">
-                    <option value="asc">Tăng dần</option>
-                    <option value="desc">Giảm dần</option>
-                  </select>
-                </div>
-                <button type="submit" class="btn btn-primary">Sắp xếp</button>
-              </form>
-            </div>
-                      <table class="table table-bordered ">
+                            <form method="GET" action="" class="d-flex align-items-center w-50">
+                              <div class="me-2" style="flex: 1;">
+                                <select name="column" class="form-select">
+                                  <option value="">Tất cả</option>
+                                  <option value="maPhong">Mã phòng</option>
+                                  <option value="soPhong">Số phòng</option>
+                                  <option value="soChoToiDa">Số ngồi tối đa</option>
+                                </select>
+                              </div>
+                              <div class="me-2" style="flex: 1;">
+                                <input type="text" name="keyword" class="form-control" placeholder="Nhập từ khóa tìm kiếm">
+                              </div>
+                              <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                            </form>
+                            <form method="GET" action="" class="d-flex align-items-center w-50">
+                              <div class="me-2" style="flex: 1;">
+                                <select name="column" class="form-select">
+                                  <option value="">Chọn cột sắp xếp</option>
+                                  <option value="maPhong">Mã phòng</option>
+                                  <option value="soPhong">Số phòng</option>
+                                  <option value="soChoToiDa">Số ngồi tối đa</option>
+                                </select>
+                              </div>
+                              <div class="me-2" style="flex: 1;">
+                                <select name="order" class="form-select">
+                                  <option value="asc">Tăng dần</option>
+                                  <option value="desc">Giảm dần</option>
+                                </select>
+                              </div>
+                              <button type="submit" class="btn btn-primary">Sắp xếp</button>
+                            </form>
+                          </div>
+                      <table class="table table-bordered">
                           <thead>
                               <tr>
                                   <th scope="col">STT</th>
@@ -86,7 +86,8 @@ include('partials/connectDB.php');
                           <td>{$row['soChoToiDa']}</td>
                           <td>
                          <a href='edit_phonghoc.php?maPhong=" . $row['maPhong'] . "' class='btn btn-success'><i class='bi bi-pencil-square'></i></a>
-                        <a href='phonghoc.php?delete=true&maphonghoc=" . $row['maPhong'] . "' class='btn btn-danger' onclick='return confirm(\"Bạn có chắc chắn muốn xóa?\")'><i class='bi bi-trash'></i></a>
+                      <a href='phonghoc.php?delete=true&maPhong=" . $row['maPhong'] . "' class='btn btn-danger' onclick='return confirm(\"Bạn có chắc chắn muốn xóa?\")'>
+                      <i class='bi bi-trash'></i></a>
                           </td>
                           </tr>";
                               $stt++;
@@ -104,24 +105,28 @@ include('partials/connectDB.php');
       </div>
   </section>
 
-    
-
   </main><!-- End #main -->
   
 <?php
-  if (isset($_GET['delete']) && isset($_GET['maPhong'])) {
-    $maPhong = $_GET['maPhong'];
-    // Thực hiện câu lệnh xóa
-    $query = "DELETE FROM phonghoc WHERE maPhong = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("s", $maPhong);
-
-    if ($stmt->execute()) {
+if (isset($_GET['delete']) && isset($_GET['maPhong'])) {
+  $maPhong = $_GET['maPhong'];
+  
+  // Sanitize the maPhong to prevent any malicious input
+  $maPhong = htmlspecialchars($maPhong);
+  
+  // Prepare and execute delete statement
+  $query = "DELETE FROM phonghoc WHERE maPhong = ?";
+  $stmt = $conn->prepare($query);
+  $stmt->bind_param("s", $maPhong);
+  
+  if ($stmt->execute()) {
       echo "<script>alert('Xoá thành công!'); window.location.href = 'phonghoc.php';</script>";
   } else {
       echo "Lỗi khi xoá Phòng học: " . $stmt->error;
   }
 }
 ?>
-  <?php
+
+<?php
 include('partials/footer.php');
+?>

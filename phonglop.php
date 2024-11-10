@@ -37,7 +37,7 @@ include('partials/connectDB.php');
                     <option value="">Tất cả</option>
                     <option value="maPhong">Số phòng</option>
                     <option value="tenLop">Lớp</option>
-                    <option value="hocKyNamHoc">Học kỳ-năm học</option>
+                  
                   </select>
                 </div>
                 <div class="me-2" style="flex: 1;">
@@ -51,7 +51,7 @@ include('partials/connectDB.php');
                     <option value="">Chọn cột sắp xếp</option>
                     <option value="maPhong">Số phòng</option>
                     <option value="tenLop">Lớp</option>
-                    <option value="hocKyNamHoc">Học kỳ-năm học</option>
+                   
                   </select>
                 </div>
                 <div class="me-2" style="flex: 1;">
@@ -69,15 +69,17 @@ include('partials/connectDB.php');
                   <th scope="col">STT</th>
                   <th scope="col">Số phòng</th>
                   <th scope="col">Lớp</th>
-                  <th scope="col">Học kỳ-năm học</th>
+                  <th scope="col">Năm học</th>
                   <th scope="col">Thao Tác</th>
               </thead>
               <tbody>
                 <?php
                 // Lấy dữ liệu từ cơ sở dữ liệu
-                $sql = "SELECT phonglop.*, lop.tenLop
+                $sql = "SELECT phonglop.*, lop.tenLop, namhoc.nienKhoa
                 FROM phonglop
-                JOIN lop ON phonglop.maLop = lop.maLop ";
+                JOIN lop ON phonglop.maLop = lop.maLop
+                join namhoc on lop.maNamHoc = namhoc.maNamHoc  ";
+
                 $result = $conn->query($sql);
                 if ($result->num_rows > 0) {
                   $stt = 1;
@@ -86,10 +88,16 @@ include('partials/connectDB.php');
                 <th scope='row'>{$stt}</th>
                 <td>{$row['maPhong']}</td>
                 <td>{$row['tenLop']}</td>
-                <td>{$row['hocKyNamHoc']}</td>
+                <td>{$row['nienKhoa']}</td>
+              
                 <td>
-                    <a href='edit_phonglop.php?maPhong=" . $row['maPhong'] . "' class='btn btn-success'><i class='bi bi-pencil-square'></i></a>
-                        <a href='phonglop.php?delete=true&maPhong=" . $row['maPhong'] . "' class='btn btn-danger' onclick='return confirm(\"Bạn có chắc chắn muốn xóa?\")'><i class='bi bi-trash'></i></a>
+                <a href='edit_phonglop.php?maPhong=" . $row['maPhong'] . "&nienKhoa=" . $row['nienKhoa'] . "&maLop=" . $row['maLop'] . "' class='btn btn-success'>
+            <i class='bi bi-pencil-square'></i>
+          </a>
+          <a href='phonglop.php?delete=true&maPhong=" . $row['maPhong'] . "' class='btn btn-danger' onclick='return confirm(\"Bạn có chắc chắn muốn xóa?\")'>
+            <i class='bi bi-trash'></i>
+          </a>
+                   
                 </td>
                 </tr>";
                     $stt++;
