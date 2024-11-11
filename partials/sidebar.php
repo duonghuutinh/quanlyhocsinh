@@ -60,7 +60,7 @@
 
   <li class="nav-item">
     <a class="nav-link collapsed" href="khoi.php">
-      <i class="ri-microsoft-line"></i>
+      <i class="ri-numbers-fill"></i>
       <span>Thống Kê Khối</span>
     </a>
   </li><!-- End Profile Page Nav -->

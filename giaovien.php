@@ -27,7 +27,9 @@ include('partials/connectDB.php');
               <div class="d-flex align-items-center w-100 ">
                 <!-- Add and Export PDF buttons -->
                 <a href="add_giaovien.php" class="btn btn-primary me-2">Thêm</a>
-                <a href="export_pdf_giaovien.php" class="btn btn-success me-4 "><i class="ri-file-pdf-line"></i>Xuất PDF</a>
+                <a href="export_pdf_giaovien.php?column=<?php echo isset($_GET['column']) ? $_GET['column'] : ''; ?>&keyword=<?php echo isset($_GET['keyword']) ? $_GET['keyword'] : ''; ?>&order=<?php echo isset($_GET['order']) ? $_GET['order'] : 'asc'; ?>" class="btn btn-success me-4">
+    <i class="ri-file-pdf-line"></i> Xuất PDF
+</a>
                 <!-- Search Form -->
               </div>
 
@@ -126,7 +128,6 @@ include('partials/connectDB.php');
                 $stmt->execute();
                 $result = $stmt->get_result();
 
-
                 if ($result->num_rows > 0) {
                   $stt = 1;
                   while ($row = $result->fetch_assoc()) {
@@ -175,3 +176,5 @@ include('partials/connectDB.php');
 </main><!-- End #main -->
 <?php
 include('partials/footer.php');
+
+
