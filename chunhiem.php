@@ -9,9 +9,11 @@ if (isset($_GET['delete']) && isset($_GET['maGV']) && isset($_GET['maLop'])) {
   $maLop = $_GET['maLop'];
 
   // Câu truy vấn để xóa dữ liệu
-  $sql = "DELETE FROM chunhiem WHERE maGV = '$maGV' AND maLop = '$maLop'";
+  $sql = "DELETE FROM chunhiem WHERE maGV = ? AND maLop = ?";
+  $stmt = $conn->prepare($sql);
+  $stmt->bind_param("ss", $maGV, $maLop);
 
-  if ($conn->query($sql) === TRUE) {
+  if ($stmt->execute()) {
     echo "<script>alert('Xoá thành công!'); window.location.href = 'chunhiem.php';</script>";
   } else {
     echo "<script>alert('Lỗi: " . $conn->error . "');</script>";
@@ -48,10 +50,10 @@ if (isset($_GET['delete']) && isset($_GET['maGV']) && isset($_GET['maLop'])) {
               <form method="GET" action="" class="d-flex align-items-center  w-50 ">
                 <div class="me-2" style="flex: 1;">
                   <select name="column" class="form-select">
-                  <option value="">Tất cả</option>
+                    <option value="">Tất cả</option>
                     <option value="maGV">Mã giáo viên</option>
                     <option value="hoTen">Họ và tên</option>
-                    <option value="maLop">Lớp</option>
+                    <option value="tenLop">Lớp</option>
                     <option value="nienKhoa">Niên khoá</option>
                   </select>
                 </div>
@@ -66,7 +68,7 @@ if (isset($_GET['delete']) && isset($_GET['maGV']) && isset($_GET['maLop'])) {
                     <option value="">Chọn cột sắp xếp</option>
                     <option value="maGV">Mã giáo viên</option>
                     <option value="hoTen">Họ và tên</option>
-                    <option value="maLop">Lớp</option>
+                    <option value="tenLop">Lớp</option>
                     <option value="nienKhoa">Niên khoá</option>
                   </select>
                 </div>
@@ -88,16 +90,51 @@ if (isset($_GET['delete']) && isset($_GET['maGV']) && isset($_GET['maLop'])) {
                   <th scope="col">Lớp</th>
                   <th scope="col">Năm học</th>
                   <th scope="col">Thao tác</th>
+                </tr>
               </thead>
               <tbody>
                 <?php
+                // Truy vấn cơ sở dữ liệu
                 $sql = "SELECT giaovien.maGV, giaovien.hoTen AS tenGiaoVien, lop.tenLop, lop.maLop, namhoc.nienKhoa
-                FROM chunhiem
-                JOIN giaovien ON chunhiem.maGV = giaovien.maGV
-                JOIN lop ON chunhiem.maLop = lop.maLop
-                JOIN namhoc ON chunhiem.maNamHoc = namhoc.maNamHoc"; // Truy vấn nienKhoa từ bảng namhoc
+                        FROM chunhiem
+                        JOIN giaovien ON chunhiem.maGV = giaovien.maGV
+                        JOIN lop ON chunhiem.maLop = lop.maLop
+                        JOIN namhoc ON chunhiem.maNamHoc = namhoc.maNamHoc";
 
-                $result = $conn->query($sql);
+                $params = [];
+                $types = '';
+
+                // Điều kiện tìm kiếm
+                if (!empty($_GET['keyword'])) {
+                  $keyword = '%' . $_GET['keyword'] . '%';
+                  $types .= 's';
+
+                  if (!empty($_GET['column'])) {
+                    $column = $_GET['column'];
+                    $sql .= " WHERE $column LIKE ?";
+                    $params[] = $keyword;
+                  } else {
+                    $sql .= " WHERE giaovien.maGV LIKE ? OR giaovien.hoTen LIKE ? OR lop.tenLop LIKE ? OR namhoc.nienKhoa LIKE ?";
+                    $params = array_fill(0, 4, $keyword);
+                    $types .= str_repeat('s', 3);
+                  }
+                }
+
+                // Điều kiện sắp xếp
+                if (!empty($_GET['column']) && !empty($_GET['order'])) {
+                  $sort_column = $_GET['column'];
+                  $sort_order = $_GET['order'];
+                  $sql .= " ORDER BY $sort_column $sort_order";
+                }
+
+                // Chuẩn bị và thực thi truy vấn
+                $stmt = $conn->prepare($sql);
+                if (!empty($params)) {
+                  $stmt->bind_param($types, ...$params);
+                }
+                $stmt->execute();
+                $result = $stmt->get_result();
+
                 if ($result->num_rows > 0) {
                   $stt = 1;
                   while ($row = $result->fetch_assoc()) {
@@ -106,12 +143,11 @@ if (isset($_GET['delete']) && isset($_GET['maGV']) && isset($_GET['maLop'])) {
                             <td>{$row['maGV']}</td>
                             <td>{$row['tenGiaoVien']}</td>
                             <td>{$row['tenLop']}</td>
-                            <td>{$row['nienKhoa']}</td>  <!-- Hiển thị nienKhoa từ bảng namhoc -->
+                            <td>{$row['nienKhoa']}</td>
                             <td>
                               <a href='edit_chunhiem.php?maGV=" . urlencode($row['maGV']) . "&maLop=" . urlencode($row['maLop']) . "&nienKhoa=" . urlencode($row['nienKhoa']) . "' class='btn btn-success'>
                                 <i class='bi bi-pencil-square'></i>
                               </a>
-                              <!-- Nút xóa -->
                               <a href='chunhiem.php?delete=true&maGV=" . urlencode($row['maGV']) . "&maLop=" . urlencode($row['maLop']) . "' class='btn btn-danger' onclick='return confirm(\"Bạn có chắc chắn muốn xóa không?\")'>
                                 <i class='bi bi-trash'></i>
                               </a>
