@@ -27,7 +27,6 @@ $result = $stmt->get_result();
           <div class="card-body">
             <h5 class="card-title d-flex justify-content-between align-items-center">
               <div class="d-flex align-items-center w-100">
-                <a href="add_khoi.php" class="btn btn-primary me-2">Thêm Khối</a>
                 <a href="export_pdf_khoi.php?column=<?php echo isset($_GET['column']) ? $_GET['column'] : ''; ?>&keyword=<?php echo isset($_GET['keyword']) ? $_GET['keyword'] : ''; ?>&order=<?php echo isset($_GET['order']) ? $_GET['order'] : 'asc'; ?>" class="btn btn-success me-4">
                   <i class="ri-file-pdf-line"></i> Xuất PDF
                 </a>

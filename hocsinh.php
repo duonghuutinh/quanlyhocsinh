@@ -169,6 +169,50 @@ include('partials/connectDB.php');
       </div>
     </div>
   </section>
+
+  <?php
+// Hiển thị thông tin thống kê lớp học
+$sql = "CALL thong_ke_hocsinh_v4()";
+$result = $conn->query($sql);
+?>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Thống kê học sinh theo niên khóa và lớp học</h5>
+        <?php
+        if ($result->num_rows > 0) {
+            echo "<table class='table table-bordered'>
+                    <thead>
+                        <tr>
+                            <th>Niên khoá</th>
+                            <th>Lớp</th>
+                            <th>Tổng số học sinh</th>
+                            <th>Số nam</th>
+                            <th>Số nữ</th>
+                            <th>Danh sách học sinh</th>
+                        </tr>
+                    </thead>
+                    <tbody>";
+            while ($row = $result->fetch_assoc()) {
+                echo "<tr>
+                        <td>" . $row['nienKhoa'] . "</td>
+                        <td>" . $row['tenLop'] . "</td>
+                        <td>" . $row['tongSo'] . "</td>
+                        <td>" . $row['soNam'] . "</td>
+                        <td>" . $row['soNu'] . "</td>
+                        <td>" . $row['danhSachHocsinh'] . "</td>
+                      </tr>";
+            }
+            echo "</tbody></table>";
+        } else {
+            echo "Không có dữ liệu thống kê";
+        }
+        ?>
+    </div>
+</div>
+
+
+
 </main><!-- End #main -->
 
 <?php
