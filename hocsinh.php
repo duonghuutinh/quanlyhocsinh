@@ -174,19 +174,17 @@ include('partials/connectDB.php');
 <?php
 // Xử lý xóa học sinh
 if (isset($_GET['delete']) && isset($_GET['maHS'])) {
-  $maHS = $_GET['maHS'];
-  $query = "DELETE FROM hocsinh WHERE maHS = ?";
-  $stmt = $conn->prepare($query);
-  $stmt->bind_param("s", $maHS);
+    $maHS = $_GET['maHS'];
+    $query = "DELETE FROM hocsinh WHERE maHS = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("s", $maHS);
 
-  if ($stmt->execute()) {
-    echo "<script>alert('Xoá thành công!'); window.location.href = 'hocsinh.php';</script>";
-  } else {
-    echo "Lỗi khi xoá học sinh: " . $stmt->error;
-  }
+    if ($stmt->execute()) {
+        echo "<script>alert('Xoá thành công!'); window.location.href = 'hocsinh.php';</script>";
+    } else {
+        echo "Lỗi khi xoá học sinh: " . $stmt->error;
+    }
 }
 ?>
-
-<?php
 include('partials/footer.php');
 ?>
