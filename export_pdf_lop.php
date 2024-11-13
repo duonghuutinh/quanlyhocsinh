@@ -29,7 +29,7 @@ $pdf->Cell(30, 8, 'Phòng học', 1, 0, 'C', 1);
 $pdf->Cell(50, 8, 'Chủ nhiệm', 1, 0, 'C', 1);
 $pdf->Cell(30, 8, 'Niên khoá', 1, 1, 'C', 1);
 
-// Truy vấn SQL lấy danh sách lớp
+// Câu truy vấn cơ bản
 $sql = "SELECT lop.maLop, lop.tenLop, 
         COUNT(hocsinh.maHS) AS soHocSinh, 
         giaovien.hoTen AS giaoVienChuNhiem,                       
@@ -44,7 +44,29 @@ $sql = "SELECT lop.maLop, lop.tenLop,
         LEFT JOIN phonghoc ON phonglop.maPhong = phonghoc.maPhong
         GROUP BY lop.maLop, lop.tenLop, giaovien.hoTen, lop.maNamHoc, phonghoc.soPhong";
 
-$result = $conn->query($sql);
+// Xử lý tìm kiếm
+$params = [];
+if (isset($_GET['keyword']) && $_GET['keyword'] != "") {
+    $column = $_GET['column'];
+    $keyword = "%" . $_GET['keyword'] . "%";
+
+    if ($column) {
+        $sql .= " HAVING $column LIKE ?";
+        $params[] = $keyword;
+    } else {
+        $sql .= " HAVING tenLop LIKE ? OR soHocSinh LIKE ? OR phongHoc LIKE ? OR giaoVienChuNhiem LIKE ? OR nienKhoa LIKE ?";
+        $params = array_fill(0, 5, $keyword);
+    }
+}
+
+// Thực thi câu truy vấn
+$stmt = $conn->prepare($sql);
+if (!empty($params)) {
+    $stmt->bind_param(str_repeat('s', count($params)), ...$params);
+}
+$stmt->execute();
+$result = $stmt->get_result();
+
 $stt = 1;
 
 while ($row = $result->fetch_assoc()) {

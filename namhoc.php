@@ -46,7 +46,9 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['maNam
             <h5 class="card-title d-flex justify-content-between align-items-center">
               <div>
                 <a href="add_namhoc.php" class="btn btn-primary me-2">Thêm</a>
-                <a href="export_pdf_namhoc.php" class="btn btn-success"><i class="ri-file-word-2-line"></i> Xuất PDF</a>
+                <a href="export_pdf_namhoc.php?column=<?php echo isset($_GET['column']) ? $_GET['column'] : ''; ?>&keyword=<?php echo isset($_GET['keyword']) ? $_GET['keyword'] : ''; ?>&order=<?php echo isset($_GET['order']) ? $_GET['order'] : 'asc'; ?>" class="btn btn-success me-4">
+                  <i class="ri-file-pdf-line"></i> Xuất PDF
+                </a>
               </div>
             </h5>
             <div class="row">

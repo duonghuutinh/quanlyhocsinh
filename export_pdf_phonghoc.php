@@ -27,18 +27,46 @@ $pdf->Cell(40, 8, 'Mã phòng', 1, 0, 'C', 1);
 $pdf->Cell(40, 8, 'Số phòng', 1, 0, 'C', 1);
 $pdf->Cell(40, 8, 'Số ngồi tối đa', 1, 1, 'C', 1);
 
-// Truy vấn SQL lấy danh sách phòng học
+// Câu truy vấn cơ bản
 $sql = "SELECT * FROM phonghoc";
-$result = $conn->query($sql);
-$stt = 1;
 
-while ($row = $result->fetch_assoc()) {
-    // Thiết lập các ô với kích thước tương tự tiêu đề để dữ liệu hiển thị đều nhau
-    $pdf->Cell(20, 8, $stt, 1, 0, 'C');
-    $pdf->Cell(40, 8, $row['maPhong'], 1, 0, 'C');
-    $pdf->Cell(40, 8, $row['soPhong'], 1, 0, 'C');
-    $pdf->Cell(40, 8, $row['soChoToiDa'], 1, 1, 'C');
-    $stt++;
+// Thêm phần tìm kiếm vào SQL nếu có
+if (isset($_GET['keyword']) && $_GET['keyword'] != "") {
+    $column = $_GET['column'];
+    $keyword = $_GET['keyword'];
+    $searchTerm = "%" . $keyword . "%";
+
+    if ($column) {
+        $sql .= " WHERE $column LIKE ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $searchTerm);
+    } else {
+        // Tìm kiếm trong nhiều cột
+        $sql .= " WHERE maPhong LIKE ? OR soPhong LIKE ? OR soChoToiDa LIKE ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sss", $searchTerm, $searchTerm, $searchTerm);
+    }
+} else {
+    $stmt = $conn->prepare($sql);
+}
+
+// Thực thi câu truy vấn và lấy kết quả
+$stmt->execute();
+$result = $stmt->get_result();
+
+$stt = 1; // Biến đếm cho cột STT
+
+// Xuất dữ liệu ra PDF
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $pdf->Cell(20, 8, $stt, 1, 0, 'C');
+        $pdf->Cell(40, 8, $row['maPhong'], 1, 0, 'C');
+        $pdf->Cell(40, 8, $row['soPhong'], 1, 0, 'C');
+        $pdf->Cell(40, 8, $row['soChoToiDa'], 1, 1, 'C');
+        $stt++;
+    }
+} else {
+    $pdf->Cell(0, 8, 'Không có dữ liệu', 0, 1, 'C');
 }
 
 // Xuất file PDF
