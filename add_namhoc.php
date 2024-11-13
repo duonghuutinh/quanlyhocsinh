@@ -1,4 +1,4 @@
-<?php 
+<?php
 include('partials/header.php');
 include('partials/sidebar.php');
 include('partials/connectDB.php');
@@ -58,27 +58,42 @@ include('partials/connectDB.php');
         $maNamHoc = $_POST['maNamHoc'];
         $nienKhoa = $_POST['nienKhoa'];
 
-        // Câu lệnh SQL để thêm Năm Học vào bảng namhoc
-        $sql = "INSERT INTO namhoc (maNamHoc, nienKhoa) VALUES (?, ?)";
-        $stmt = $conn->prepare($sql);
+        // Kiểm tra xem mã năm học đã tồn tại chưa
+        $checkQuery = "SELECT * FROM namhoc WHERE maNamHoc = ?";
+        $checkStmt = $conn->prepare($checkQuery);
+        $checkStmt->bind_param("s", $maNamHoc);
+        $checkStmt->execute();
+        $checkResult = $checkStmt->get_result();
 
-        // Kiểm tra chuẩn bị câu lệnh SQL
-        if ($stmt === false) {
-            die("Lỗi chuẩn bị câu lệnh: " . $conn->error);
-        }
-
-        // Gán giá trị vào câu lệnh SQL
-        $stmt->bind_param("ss", $maNamHoc, $nienKhoa);
-
-        // Thực thi câu lệnh và kiểm tra kết quả
-        if ($stmt->execute()) {
-            echo "<script>alert('Thêm Năm Học thành công!'); window.location.href = 'namhoc.php';</script>";
+        if ($checkResult->num_rows > 0) {
+            // Mã năm học đã tồn tại, hiển thị thông báo lỗi
+            echo "<script>alert('Mã Năm Học này đã tồn tại. Vui lòng chọn mã khác.'); window.history.back();</script>";
         } else {
-            echo "Lỗi khi thêm Năm Học: " . $stmt->error;
+            // Câu lệnh SQL để thêm Năm Học vào bảng namhoc
+            $sql = "INSERT INTO namhoc (maNamHoc, nienKhoa) VALUES (?, ?)";
+            $stmt = $conn->prepare($sql);
+
+            // Kiểm tra chuẩn bị câu lệnh SQL
+            if ($stmt === false) {
+                die("Lỗi chuẩn bị câu lệnh: " . $conn->error);
+            }
+
+            // Gán giá trị vào câu lệnh SQL
+            $stmt->bind_param("ss", $maNamHoc, $nienKhoa);
+
+            // Thực thi câu lệnh và kiểm tra kết quả
+            if ($stmt->execute()) {
+                echo "<script>alert('Thêm Năm Học thành công!'); window.location.href = 'namhoc.php';</script>";
+            } else {
+                echo "Lỗi khi thêm Năm Học: " . $stmt->error;
+            }
+
+            // Đóng câu lệnh
+            $stmt->close();
         }
 
-        // Đóng câu lệnh và kết nối
-        $stmt->close();
+        // Đóng câu lệnh kiểm tra và kết nối
+        $checkStmt->close();
         $conn->close();
     }
     ?>
