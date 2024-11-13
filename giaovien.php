@@ -216,7 +216,6 @@ if ($result) {
   }
 ?>
 
-  
 </main>
 
 <?php
