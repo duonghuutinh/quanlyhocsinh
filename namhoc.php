@@ -46,7 +46,9 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['maNam
             <h5 class="card-title d-flex justify-content-between align-items-center">
               <div>
                 <a href="add_namhoc.php" class="btn btn-primary me-2">Thêm</a>
-                <a href="export_pdf_namhoc.php" class="btn btn-success"><i class="ri-file-word-2-line"></i> Xuất PDF</a>
+                <a href="export_pdf_namhoc.php?column=<?php echo isset($_GET['column']) ? $_GET['column'] : ''; ?>&keyword=<?php echo isset($_GET['keyword']) ? $_GET['keyword'] : ''; ?>&order=<?php echo isset($_GET['order']) ? $_GET['order'] : 'asc'; ?>" class="btn btn-success me-4">
+                  <i class="ri-file-pdf-line"></i> Xuất PDF
+                </a>
               </div>
             </h5>
             <div class="row">
@@ -92,7 +94,37 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['maNam
               <tbody>
                 <?php
                 $sql = "SELECT * FROM namhoc";
-                $result = $conn->query($sql);
+
+                // Thêm phần tìm kiếm vào SQL nếu có
+                if (isset($_GET['keyword']) && $_GET['keyword'] != "") {
+                  $column = $_GET['column'];
+                  $keyword = $_GET['keyword'];
+                  $searchTerm = "%" . $keyword . "%";
+
+                  if ($column) {
+                    $sql .= " WHERE $column LIKE ?";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("s", $searchTerm);
+                  } else {
+                    // Tìm kiếm trong nhiều cột
+                    $sql .= " WHERE maNamHoc LIKE ? OR nienKhoa LIKE ?";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("ss", $searchTerm, $searchTerm);
+                  }
+                } else {
+                  $stmt = $conn->prepare($sql);
+                }
+
+                // Thêm sắp xếp nếu có
+                if (isset($_GET['column']) && isset($_GET['order']) && in_array($_GET['column'], ['maNamHoc', 'nienKhoa'])) {
+                  $column = $_GET['column'];
+                  $order = $_GET['order'];
+                  $sql .= " ORDER BY $column $order";
+                  $stmt = $conn->prepare($sql);
+                }
+                $stmt->execute();
+                $result = $stmt->get_result();
+                // $result = $conn->query($sql);
                 if ($result->num_rows > 0) {
                   $stt = 1;
                   while ($row = $result->fetch_assoc()) {

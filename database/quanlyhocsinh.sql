@@ -30,7 +30,6 @@ CREATE TABLE `chunhiem` (
   KEY `maLop` (`maLop`),
   KEY `fk_chunhiem_namhoc` (`maNamHoc`),
   CONSTRAINT `chunhiem_ibfk_1` FOREIGN KEY (`maGV`) REFERENCES `giaovien` (`maGV`),
-  CONSTRAINT `chunhiem_ibfk_2` FOREIGN KEY (`maLop`) REFERENCES `lop` (`maLop`),
   CONSTRAINT `fk_chunhiem_namhoc` FOREIGN KEY (`maNamHoc`) REFERENCES `namhoc` (`maNamHoc`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -41,7 +40,7 @@ CREATE TABLE `chunhiem` (
 
 LOCK TABLES `chunhiem` WRITE;
 /*!40000 ALTER TABLE `chunhiem` DISABLE KEYS */;
-INSERT INTO `chunhiem` VALUES ('GV101',101,NULL),('GV101',111,NULL),('GV101',121,NULL),('GV101',888,NULL),('GV102',102,NULL),('GV102',112,NULL),('GV102',122,NULL),('GV103',103,NULL),('GV103',113,NULL),('GV103',123,NULL),('GV104',103,NULL),('GV104',104,NULL),('GV104',114,NULL),('GV104',124,NULL),('GV105',105,NULL),('GV105',115,NULL),('GV105',125,NULL),('GV121',115,NULL),('GV121',888,NULL),('GV101',1,2020),('GV112',102,2020),('GV101',105,2021),('GV102',1,2021),('GV106',104,2021),('GV180',102,2021),('GV112',104,2022);
+INSERT INTO `chunhiem` VALUES ('GV105',1,2020),('GV110',2,2020);
 /*!40000 ALTER TABLE `chunhiem` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -88,7 +87,7 @@ CREATE TABLE `hocky` (
   PRIMARY KEY (`maHocKy`),
   KEY `maNamHoc` (`maNamHoc`),
   CONSTRAINT `hocky_ibfk_1` FOREIGN KEY (`maNamHoc`) REFERENCES `namhoc` (`maNamHoc`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -117,8 +116,7 @@ CREATE TABLE `hocsinh` (
   `maLop` int DEFAULT NULL,
   `gioiTinh` enum('Nam','Nữ','Khác') COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`maHS`),
-  KEY `maLop` (`maLop`),
-  CONSTRAINT `hocsinh_ibfk_1` FOREIGN KEY (`maLop`) REFERENCES `lop` (`maLop`)
+  KEY `maLop` (`maLop`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -128,8 +126,32 @@ CREATE TABLE `hocsinh` (
 
 LOCK TABLES `hocsinh` WRITE;
 /*!40000 ALTER TABLE `hocsinh` DISABLE KEYS */;
-INSERT INTO `hocsinh` VALUES ('HS001','Dương Hửu Tính','2003-08-14','Ấp KosLa, xã Thanh Sơn, huyện Trà Cú, tỉnh Trà Vinh','0971831109',1,'Nam'),('HS004','Nguyễn Văn An','2008-03-12','An Giang','0911222333',101,NULL),('HS005','Trần Thị Bình','2007-04-10','Cà Mau','0944556677',101,NULL),('HS006','Lê Văn Cường','2008-09-08','Kiên Giang','0977889900',102,NULL),('HS007','Phạm Thị Duyên','2008-01-15','Bến Tre','0912345678',102,'Nam'),('HS008','Nguyễn Thị Hằng','2007-02-20','Hậu Giang','0944332211',103,NULL),('HS009','Trần Văn Hoàng','2008-03-25','Sóc Trăng','0901234567',103,NULL),('HS010','Lê Thị Lan','2008-04-30','Vĩnh Long','0912345679',104,NULL),('HS011','Phạm Minh Tuấn','2007-05-12','Đồng Tháp','0912345680',104,NULL),('HS012','Nguyễn Văn Hải','2008-06-10','Tiền Giang','0923456780',105,NULL),('HS013','Trần Thị Mai','2007-07-15','Hà Tiên','0931234568',106,'Nam'),('HS014','Lê Văn Kiệt','2008-08-20','Bạc Liêu','0945678901',111,NULL),('HS015','Phạm Thị Ngọc','2007-09-25','Cà Mau','0909876543',111,NULL),('HS016','Nguyễn Văn Thanh','2008-10-10','Vĩnh Long','0913456782',112,NULL),('HS017','Trần Văn Nam','2008-11-15','Đồng Tháp','0922345678',112,NULL),('HS018','Lê Thị Hương','2007-12-20','Hậu Giang','0934567891',113,NULL),('HS019','Phạm Minh Phúc','2008-01-30','Kiên Giang','0912345680',113,NULL),('HS020','Nguyễn Thị Như','2007-02-14','An Giang','0945678910',114,NULL),('HS021','Trần Văn Tú','2008-03-05','Bến Tre','0908765432',114,NULL),('HS022','Lê Văn Nghĩa','2008-04-18','Sóc Trăng','0911234567',115,NULL),('HS023','Phạm Thị Quỳnh','2007-05-30','Tiền Giang','0923456789',115,NULL),('HS024','Nguyễn Văn Đạt','2008-06-22','Hà Tiên','0934567801',121,NULL),('HS025','Trần Thị Lan','2007-07-19','Bạc Liêu','0901234567',121,NULL),('HS026','Lê Văn Phú','2008-08-14','Cà Mau','0912345678',122,NULL),('HS027','Phạm Thị Yến','2008-09-10','Vĩnh Long','0987654321',122,NULL),('HS028','Nguyễn Minh Khải','2007-10-25','Đồng Tháp','0934567890',123,NULL),('HS029','Trần Văn Cường','2008-11-30','Tiền Giang','0911222333',123,NULL),('HS031','Phạm Hiếu Văn','2009-01-05','Kiên Giang','0977889900',106,NULL),('HS032','Nguyễn Văn Ngọc Ngà','2009-02-28','An Giang','0912345678',106,NULL),('HS116','Cao','2024-11-16','ưeqweqwe','0678857856',103,'Nam'),('HS888','Cao Nguyễn Mỹ Quyên','2003-08-20','Hậu Giang','0678857856',111,'Nữ'),('HS902','Hồ Hoàng Hảo','2024-11-18','Cà mau','0678857856',101,'Khác');
+INSERT INTO `hocsinh` VALUES ('HS0001','Nguyễn Thị Mai','2008-01-05','34 Lý Thường Kiệt, Cần Thơ','0912345678',2,'Nữ'),('HS0002','Trần Minh Tuấn','2008-06-08','55 Nguyễn Thái Học, Ninh Kiều','0987654321',1,'Nam'),('HS0003','Nguyễn Hồng Hạnh','2008-10-10','3/2 Ninh Kiều, Cần Thơ','0879727132',2,'Nữ'),('HS0004','Trần Hoàng Huy','2008-06-15','Cái Khế, Cần Thơ','0937417578',2,'Nam'),('HS0006','Trần Minh Hải','2024-11-27','4234234','2342342342',6,'Nam'),('HS0007','Trần Hải Hà','2024-11-01','3123','2312312312',10,'Nam'),('HS0008','Nguyễn Thị Thanh ','2024-11-09','123123','2312312312',9,'Nữ');
 /*!40000 ALTER TABLE `hocsinh` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `khoi`
+--
+
+DROP TABLE IF EXISTS `khoi`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `khoi` (
+  `maKhoi` int NOT NULL AUTO_INCREMENT,
+  `tenKhoi` varchar(100) NOT NULL,
+  PRIMARY KEY (`maKhoi`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `khoi`
+--
+
+LOCK TABLES `khoi` WRITE;
+/*!40000 ALTER TABLE `khoi` DISABLE KEYS */;
+INSERT INTO `khoi` VALUES (1,'Khối 10'),(2,'Khối 11'),(3,'Khối 12');
+/*!40000 ALTER TABLE `khoi` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -140,13 +162,14 @@ DROP TABLE IF EXISTS `lop`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `lop` (
-  `maLop` int NOT NULL,
+  `maLop` int NOT NULL AUTO_INCREMENT,
   `tenLop` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `maNamHoc` int DEFAULT NULL,
+  `maKhoi` int DEFAULT NULL,
   PRIMARY KEY (`maLop`),
   KEY `fk_namhoc_maNamHoc` (`maNamHoc`),
   CONSTRAINT `fk_namhoc_maNamHoc` FOREIGN KEY (`maNamHoc`) REFERENCES `namhoc` (`maNamHoc`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -155,7 +178,7 @@ CREATE TABLE `lop` (
 
 LOCK TABLES `lop` WRITE;
 /*!40000 ALTER TABLE `lop` DISABLE KEYS */;
-INSERT INTO `lop` VALUES (1,'12A1',2021),(2,'12A2',2023),(4,'12A2',2024);
+INSERT INTO `lop` VALUES (1,'10A1',2020,1),(2,'10A2',2020,1),(3,'10A3',2020,1),(4,'10A4',2020,1),(6,'11A1',2021,2),(7,'11A2',2021,2),(8,'11A3',2021,2),(9,'12A1',2022,3),(10,'12A2',2022,3),(11,'12A3',2022,3),(12,'12A4',2022,3),(13,'12A5',2022,3);
 /*!40000 ALTER TABLE `lop` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -170,7 +193,7 @@ CREATE TABLE `namhoc` (
   `maNamHoc` int NOT NULL AUTO_INCREMENT,
   `nienKhoa` varchar(50) NOT NULL,
   PRIMARY KEY (`maNamHoc`)
-) ENGINE=InnoDB AUTO_INCREMENT=2026 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2026 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -204,7 +227,7 @@ CREATE TABLE `phonghoc` (
 
 LOCK TABLES `phonghoc` WRITE;
 /*!40000 ALTER TABLE `phonghoc` DISABLE KEYS */;
-INSERT INTO `phonghoc` VALUES ('P101',101,40),('P102',102,35),('P103',103,45),('P104',104,50),('P105',105,30),('P106',106,40),('P107',107,45),('P108',108,38),('P109',109,32),('P110',110,48),('P888',88,152);
+INSERT INTO `phonghoc` VALUES ('P101',101,40),('P102',102,40),('P103',103,40),('P104',104,40),('P105',105,40),('P106',106,40),('P107',107,40),('P108',108,40),('P109',109,40),('P110',110,40),('P201',201,40),('P202',202,40),('P203',203,40),('P204',204,40),('P205',205,40),('P206',206,40),('P207',207,40),('P208',208,40),('P209',209,40),('P210',210,40),('P301',301,40),('P302',302,40),('P303',303,40),('P304',304,40),('P305',305,40),('P306',306,40),('P307',307,40),('P308',308,40),('P309',309,40),('P310',310,40);
 /*!40000 ALTER TABLE `phonghoc` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -218,11 +241,9 @@ DROP TABLE IF EXISTS `phonglop`;
 CREATE TABLE `phonglop` (
   `maPhong` varchar(10) COLLATE utf8mb4_general_ci NOT NULL,
   `maLop` int NOT NULL,
-  `hocKyNamHoc` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`maPhong`,`maLop`,`hocKyNamHoc`),
+  PRIMARY KEY (`maPhong`,`maLop`),
   KEY `maLop` (`maLop`),
-  CONSTRAINT `phonglop_ibfk_1` FOREIGN KEY (`maPhong`) REFERENCES `phonghoc` (`maPhong`),
-  CONSTRAINT `phonglop_ibfk_2` FOREIGN KEY (`maLop`) REFERENCES `lop` (`maLop`)
+  CONSTRAINT `phonglop_ibfk_1` FOREIGN KEY (`maPhong`) REFERENCES `phonghoc` (`maPhong`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -232,7 +253,7 @@ CREATE TABLE `phonglop` (
 
 LOCK TABLES `phonglop` WRITE;
 /*!40000 ALTER TABLE `phonglop` DISABLE KEYS */;
-INSERT INTO `phonglop` VALUES ('P101',101,'HK1_2023-2024'),('P102',102,'HK1_2023-2024'),('P103',103,'HK1_2022-2023'),('P104',104,'HK2_2023-2024'),('P105',105,'HK2_2023-2024'),('P106',111,'HK1_2023-2024'),('P888',111,'HK1_2023-2024'),('P107',112,'HK1_2023-2024'),('P108',113,'HK1_2023-2024'),('P109',114,'HK1_2023-2024'),('P110',115,'HK1_2023-2024');
+INSERT INTO `phonglop` VALUES ('P102',1),('P101',2),('P103',3),('P104',4),('P102',6),('P204',7),('P105',8),('P301',9);
 /*!40000 ALTER TABLE `phonglop` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -250,7 +271,7 @@ CREATE TABLE `taikhoan` (
   `matkhau` varchar(255) NOT NULL,
   `role` int NOT NULL,
   PRIMARY KEY (`taikhoan`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -272,4 +293,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-11-09  9:51:22
+-- Dump completed on 2024-11-11 16:28:16
