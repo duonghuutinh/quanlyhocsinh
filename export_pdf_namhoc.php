@@ -17,7 +17,7 @@ $pdf->AddPage();
 $html = '<h1>Danh sách Năm Học</h1><table border="1" cellpadding="5">
 <thead>
 <tr>
-<th>ID</th>
+<th>STT</th>
 <th>Năm học</th>
 <th>Niên khoá</th>
 </tr>

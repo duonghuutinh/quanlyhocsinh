@@ -102,26 +102,32 @@ include('partials/connectDB.php');
                         FROM hocsinh
                         JOIN lop ON hocsinh.maLop = lop.maLop
                         JOIN namhoc ON lop.maNamHoc = namhoc.maNamHoc";
+// Thêm phần tìm kiếm vào SQL nếu có
+if (isset($_GET['keyword']) && $_GET['keyword'] != "") {
+  $column = $_GET['column'];
+  $keyword = $_GET['keyword'];
+  $searchTerm = "%" . $keyword . "%";
 
-                // Thêm phần tìm kiếm vào SQL nếu có
-                if (isset($_GET['keyword']) && $_GET['keyword'] != "") {
-                  $column = $_GET['column'];
-                  $keyword = $_GET['keyword'];
-                  $searchTerm = "%" . $keyword . "%";
+  if ($column) {
+      // If the column is provided, we directly search in the specified column
+      if ($column === 'maLop') {
+          $sql .= " WHERE hocsinh.maLop LIKE ?";  // Explicitly reference maLop from the hocsinh table
+      } else {
+          $sql .= " WHERE $column LIKE ?";  
+      }
+      $stmt = $conn->prepare($sql);
+      $stmt->bind_param("s", $searchTerm);
+  } else {
+      // Tìm kiếm trong nhiều cột, including columns from the joined tables (lop and namhoc)
+      $sql .= " WHERE hocsinh.maHS LIKE ? OR hocsinh.hoTen LIKE ? OR hocsinh.gioiTinh LIKE ? OR lop.tenLop LIKE ? OR namhoc.nienKhoa LIKE ? OR hocsinh.ngaySinh LIKE ? OR hocsinh.sdtPH LIKE ? OR hocsinh.diaChi LIKE ?";
+      $stmt = $conn->prepare($sql);
+      $stmt->bind_param("ssssssss", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm);
+  }
+} else {
+  $stmt = $conn->prepare($sql);
+}
 
-                  if ($column) {
-                    $sql .= " WHERE $column LIKE ?";
-                    $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("s", $searchTerm);
-                  } else {
-                    // Tìm kiếm trong nhiều cột
-                    $sql .= " WHERE maHS LIKE ? OR hoTen LIKE ? OR gioiTinh LIKE ? OR tenLop LIKE ? OR nienKhoa LIKE ? OR ngaySinh LIKE ? OR sdtPH LIKE ? OR diaChi LIKE ?";
-                    $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("ssssssss", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm);
-                  }
-                } else {
-                  $stmt = $conn->prepare($sql);
-                }
+
 
                 // Thêm sắp xếp nếu có
                 if (isset($_GET['column']) && isset($_GET['order']) && in_array($_GET['column'], ['maHS', 'hoTen', 'gioiTinh', 'tenLop', 'nienKhoa', 'ngaySinh', 'sdtPH', 'diaChi'])) {
@@ -171,17 +177,17 @@ include('partials/connectDB.php');
   </section>
 
   <?php
-// Hiển thị thông tin thống kê lớp học
-$sql = "CALL thong_ke_hocsinh_theo_lop()";
-$result = $conn->query($sql);
-?>
+  // Hiển thị thông tin thống kê lớp học
+  $sql = "CALL thong_ke_hocsinh_theo_lop()";
+  $result = $conn->query($sql);
+  ?>
 
-<div class="card">
+  <div class="card">
     <div class="card-body">
-        <h5 class="card-title">Thống kê học sinh theo niên khóa và lớp học</h5>
-        <?php
-        if ($result->num_rows > 0) {
-            echo "<table class='table table-bordered'>
+      <h5 class="card-title">Thống kê học sinh theo niên khóa và lớp học</h5>
+      <?php
+      if ($result->num_rows > 0) {
+        echo "<table class='table table-bordered'>
                     <thead>
                         <tr>
                             <th>Niên khoá</th>
@@ -193,8 +199,8 @@ $result = $conn->query($sql);
                         </tr>
                     </thead>
                     <tbody>";
-            while ($row = $result->fetch_assoc()) {
-                echo "<tr>
+        while ($row = $result->fetch_assoc()) {
+          echo "<tr>
                         <td>" . $row['nienKhoa'] . "</td>
                         <td>" . $row['tenLop'] . "</td>
                         <td>" . $row['tongSo'] . "</td>
@@ -202,14 +208,14 @@ $result = $conn->query($sql);
                         <td>" . $row['soNu'] . "</td>
                         <td>" . $row['danhSachHocsinh'] . "</td>
                       </tr>";
-            }
-            echo "</tbody></table>";
-        } else {
-            echo "Không có dữ liệu thống kê";
         }
-        ?>
+        echo "</tbody></table>";
+      } else {
+        echo "Không có dữ liệu thống kê";
+      }
+      ?>
     </div>
-</div>
+  </div>
 
 
 
@@ -218,16 +224,16 @@ $result = $conn->query($sql);
 <?php
 // Xử lý xóa học sinh
 if (isset($_GET['delete']) && isset($_GET['maHS'])) {
-    $maHS = $_GET['maHS'];
-    $query = "DELETE FROM hocsinh WHERE maHS = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("s", $maHS);
+  $maHS = $_GET['maHS'];
+  $query = "DELETE FROM hocsinh WHERE maHS = ?";
+  $stmt = $conn->prepare($query);
+  $stmt->bind_param("s", $maHS);
 
-    if ($stmt->execute()) {
-        echo "<script>alert('Xoá thành công!'); window.location.href = 'hocsinh.php';</script>";
-    } else {
-        echo "Lỗi khi xoá học sinh: " . $stmt->error;
-    }
+  if ($stmt->execute()) {
+    echo "<script>alert('Xoá thành công!'); window.location.href = 'hocsinh.php';</script>";
+  } else {
+    echo "Lỗi khi xoá học sinh: " . $stmt->error;
+  }
 }
 ?>
 include('partials/footer.php');

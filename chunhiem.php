@@ -129,11 +129,7 @@ if (isset($_GET['delete']) && isset($_GET['maGV']) && isset($_GET['maLop'])) {
                   $sql .= " ORDER BY $sort_column $sort_order";
                 }
 
-                // Chuẩn bị và thực thi truy vấn
-                $stmt = $conn->prepare($sql);
-                if (!empty($params)) {
-                  $stmt->bind_param($types, ...$params);
-                }
+             
                 $stmt->execute();
                 $result = $stmt->get_result();
 
