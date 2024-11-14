@@ -36,7 +36,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['maNam
     </nav>
   </div><!-- End Page Title -->
   <div class="pagetitle">
-    <h1>Danh sách giáo viên</h1>
+    <h1>Danh sách năm học</h1>
   </div>
   <section class="section">
     <div class="row">

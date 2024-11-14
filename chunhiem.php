@@ -25,7 +25,7 @@ if (isset($_GET['delete']) && isset($_GET['maGV']) && isset($_GET['maLop'])) {
     <h1>Chủ Nhiệm</h1>
     <nav>
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="index.php">Trang chủ</a></li>
         <li class="breadcrumb-item active">Chủ nhiệm</li>
       </ol>
     </nav>

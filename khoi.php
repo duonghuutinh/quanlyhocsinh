@@ -37,12 +37,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['maNam
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title d-flex justify-content-between align-items-center">
-                            <div>
-                                <a href="#" class="btn btn-primary me-2">Thêm</a>
-                                <a href="export_pdf_khoi.php?column=<?php echo isset($_GET['column']) ? $_GET['column'] : ''; ?>&keyword=<?php echo isset($_GET['keyword']) ? $_GET['keyword'] : ''; ?>&order=<?php echo isset($_GET['order']) ? $_GET['order'] : 'asc'; ?>" class="btn btn-success me-4">
-                                 <i class="ri-file-pdf-line"></i> Xuất PDF
-                                </a>
-                            </div>
                         </h5>
                         <div class="row">
                             <form method="GET" action="" class="d-flex align-items-center w-50">

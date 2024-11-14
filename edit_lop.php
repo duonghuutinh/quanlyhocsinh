@@ -96,7 +96,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <h1>Chỉnh Sửa Thông Tin Lớp</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item"><a href="index.php">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="lop.php">Lớp</a></li>
                 <li class="breadcrumb-item active">Chỉnh Sửa Thông Tin Lớp</li>
             </ol>
         </nav>

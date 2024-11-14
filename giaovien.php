@@ -8,7 +8,7 @@ include('partials/connectDB.php');
     <h1>Giáo Viên</h1>
     <nav>
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="index.php">Trang chủ</a></li>
         <li class="breadcrumb-item active">Giáo viên</li>
       </ol>
     </nav>
