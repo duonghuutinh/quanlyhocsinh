@@ -9,6 +9,7 @@ $chunhiem_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS cou
 $hocsinh_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS count FROM hocsinh"))['count'];
 $lop_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS count FROM lop"))['count'];
 $phonghoc_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS count FROM phonghoc"))['count'];
+$phonglop_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS count FROM phonglop"))['count'];
 $namhoc_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS count FROM namhoc"))['count'];
 $hocky_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS count FROM hocky"))['count'];
 ?>
@@ -46,7 +47,7 @@ $hocky_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS count 
 
               <!-- Chủ nhiệm -->
               <div class="col-xxl-3 col-md-6 mb-4">
-                  <div class="card info-card revenue-card">
+                  <div class="card info-card sales-card">
                       <div class="card-body">
                           <h5 class="card-title">Chủ nhiệm</h5>
                           <div class="d-flex align-items-center">
@@ -63,7 +64,7 @@ $hocky_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS count 
 
               <!-- Học sinh -->
               <div class="col-xxl-3 col-md-6 mb-4">
-                  <div class="card info-card revenue-card">
+                  <div class="card info-card sales-card">
                       <div class="card-body">
                           <h5 class="card-title">Học Sinh</h5>
                           <div class="d-flex align-items-center">
@@ -80,7 +81,7 @@ $hocky_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS count 
 
               <!-- Lớp -->
               <div class="col-xxl-3 col-md-6 mb-4">
-                  <div class="card info-card revenue-card">
+                  <div class="card info-card sales-card">
                       <div class="card-body">
                           <h5 class="card-title">Lớp</h5>
                           <div class="d-flex align-items-center">
@@ -112,9 +113,27 @@ $hocky_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS count 
                   </div>
               </div>
 
+
+               <!-- Học sinh -->
+               <div class="col-xxl-3 col-md-6 mb-4">
+                  <div class="card info-card sales-card">
+                      <div class="card-body">
+                          <h5 class="card-title">Phòng Lớp</h5>
+                          <div class="d-flex align-items-center">
+                              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                  <i class="ri-team-line"></i>
+                              </div>
+                              <div class="ps-3">
+                                  <h6><?php echo $phonglop_count; ?></h6>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
               <!-- Năm Học -->
               <div class="col-xxl-3 col-md-6 mb-4">
-                  <div class="card info-card revenue-card">
+                  <div class="card info-card sales-card">
                       <div class="card-body">
                           <h5 class="card-title">Năm Học</h5>
                           <div class="d-flex align-items-center">
@@ -131,7 +150,7 @@ $hocky_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS count 
 
               <!-- Học Kỳ -->
               <div class="col-xxl-3 col-md-6 mb-4">
-                  <div class="card info-card revenue-card">
+                  <div class="card info-card sales-card">
                       <div class="card-body">
                           <h5 class="card-title">Học Kỳ</h5>
                           <div class="d-flex align-items-center">

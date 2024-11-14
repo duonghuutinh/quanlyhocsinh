@@ -4,7 +4,7 @@
 $servername = "localhost"; // hoặc tên máy chủ của bạn
 $username = "root"; // tên người dùng mặc định của XAMPP
 $password = "kunieucoi1994"; // mật khẩu mặc định thường để trống
-$dbname = "quanlyhocsinh1"; // tên cơ sở dữ liệu của bạn
+$dbname = "qlhs"; // tên cơ sở dữ liệu của bạn
 
 // Tạo kết nối
 $conn = new mysqli($servername, $username, $password, $dbname);
