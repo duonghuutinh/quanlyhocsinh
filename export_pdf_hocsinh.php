@@ -26,7 +26,6 @@ $pdf = new TCPDF('L', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 $pdf->SetCreator(PDF_CREATOR);
 $pdf->SetAuthor('Tên Tác Giả');
 $pdf->SetTitle('Danh sách Học Sinh');
-$pdf->SetHeaderData('', 0, 'Danh sách Học Sinh', '');
 
 // Thiết lập font và trang
 $pdf->SetFont('dejavusans', '', 12);

@@ -3,22 +3,17 @@ include('partials/header.php');
 include('partials/sidebar.php');
 include('partials/connectDB.php');
 
-if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['maNamHoc'])) {
-    $maNamHoc = $_GET['maNamHoc'];
-    $sql = "DELETE FROM namhoc WHERE maNamHoc = ?";
-    $stmt = $conn->prepare($sql);
-    if ($stmt) {
-        $stmt->bind_param("s", $maNamHoc);
-        if ($stmt->execute()) {
-            echo "<script>alert('Xóa năm học thành công!'); window.location.href = 'namhoc.php';</script>";
-        } else {
-            echo "<script>alert('Lỗi khi xóa năm học: " . $stmt->error . "'); window.location.href = 'namhoc.php';</script>";
-        }
-        $stmt->close();
-    } else {
-        echo "<script>alert('Lỗi chuẩn bị câu lệnh: " . $conn->error . "');</script>";
-    }
-}
+// Khởi tạo tham số tìm kiếm và sắp xếp
+$column = isset($_GET['column']) ? $_GET['column'] : null;
+$keyword = isset($_GET['keyword']) ? '%' . $_GET['keyword'] . '%' : null;
+$order_column = isset($_GET['order_column']) ? $_GET['order_column'] : 'khoi';
+$order = isset($_GET['order']) ? $_GET['order'] : 'asc';
+
+// Gọi thủ tục `getStudentCountByClass` với các tham số
+$stmt = $conn->prepare("CALL getStudentCountByClass(?, ?, ?, ?)");
+$stmt->bind_param("ssss", $column, $keyword, $order_column, $order);
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 
 <main id="main" class="main">
@@ -37,6 +32,12 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['maNam
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title d-flex justify-content-between align-items-center">
+                            <div>
+                                <a href="#" class="btn btn-primary me-2">Thêm</a>
+                                <a href="export_pdf_khoi.php?column=<?php echo isset($_GET['column']) ? $_GET['column'] : ''; ?>&keyword=<?php echo isset($_GET['keyword']) ? $_GET['keyword'] : ''; ?>&order=<?php echo isset($_GET['order']) ? $_GET['order'] : 'asc'; ?>" class="btn btn-success me-4">
+                                 <i class="ri-file-pdf-line"></i> Xuất PDF
+                                </a>
+                            </div>
                         </h5>
                         <div class="row">
                             <form method="GET" action="" class="d-flex align-items-center w-50">
@@ -154,4 +155,5 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['maNam
         </div>
     </section>
 </main>
+
 <?php include('partials/footer.php'); ?>

@@ -3,6 +3,8 @@ include('partials/header.php');
 include('partials/sidebar.php');
 include('partials/connectDB.php');
 ?>
+
+
 <main id="main" class="main">
   <div class="pagetitle">
     <h1>Giáo Viên</h1>
@@ -12,7 +14,9 @@ include('partials/connectDB.php');
         <li class="breadcrumb-item active">Giáo viên</li>
       </ol>
     </nav>
-  </div><!-- End Page Title -->
+  </div>
+
+  <!-- Hiển thị danh sách giáo viên -->
   <div class="pagetitle">
     <h1>Danh sách giáo viên</h1>
   </div>
@@ -22,20 +26,16 @@ include('partials/connectDB.php');
         <div class="card">
           <div class="card-body">
             <h5 class="card-title d-flex justify-content-between align-items-center">
-
-              <!-- Group buttons and search form in the same row -->
-              <div class="d-flex align-items-center w-100 ">
-                <!-- Add and Export PDF buttons -->
+              <div class="d-flex align-items-center w-100">
                 <a href="add_giaovien.php" class="btn btn-primary me-2">Thêm</a>
                 <a href="export_pdf_giaovien.php?column=<?php echo isset($_GET['column']) ? $_GET['column'] : ''; ?>&keyword=<?php echo isset($_GET['keyword']) ? $_GET['keyword'] : ''; ?>&order=<?php echo isset($_GET['order']) ? $_GET['order'] : 'asc'; ?>" class="btn btn-success me-4">
-    <i class="ri-file-pdf-line"></i> Xuất PDF
-</a>
-                <!-- Search Form -->
+                  <i class="ri-file-pdf-line"></i> Xuất PDF
+                </a>
               </div>
-
             </h5>
             <div class="row">
-              <form method="GET" action="" class="d-flex align-items-center  w-50 ">
+              <!-- Form tìm kiếm -->
+              <form method="GET" action="" class="d-flex align-items-center w-50">
                 <div class="me-2" style="flex: 1;">
                   <select name="column" class="form-select">
                     <option value="">Tất cả</option>
@@ -53,7 +53,9 @@ include('partials/connectDB.php');
                 </div>
                 <button type="submit" class="btn btn-primary">Tìm kiếm</button>
               </form>
-              <form method="GET" action="" class="d-flex align-items-center  w-50">
+
+              <!-- Form sắp xếp -->
+              <form method="GET" action="" class="d-flex align-items-center w-50">
                 <div class="me-2" style="flex: 1;">
                   <select name="column" class="form-select">
                     <option value="">Chọn cột sắp xếp</option>
@@ -76,7 +78,7 @@ include('partials/connectDB.php');
               </form>
             </div>
 
-            <!-- Search Form -->
+            <!-- Bảng hiển thị giáo viên -->
             <table class="table table-bordered">
               <thead>
                 <tr>
@@ -91,13 +93,12 @@ include('partials/connectDB.php');
                   <th scope="col">Thao tác</th>
                 </tr>
               </thead>
-
               <tbody>
                 <?php
-                // Kiểm tra và tạo SQL cho việc tìm kiếm
-                $sql = "SELECT * FROM giaovien";
-
-                // Thêm phần tìm kiếm vào SQL nếu có
+                // Truy vấn danh sách giáo viên từ view
+                $sql = "SELECT * FROM danhSachGiaoVien";
+                
+                // Điều kiện tìm kiếm
                 if (isset($_GET['keyword']) && $_GET['keyword'] != "") {
                   $column = $_GET['column'];
                   $keyword = $_GET['keyword'];
@@ -108,7 +109,6 @@ include('partials/connectDB.php');
                     $stmt = $conn->prepare($sql);
                     $stmt->bind_param("s", $searchTerm);
                   } else {
-                    // Tìm kiếm trong nhiều cột
                     $sql .= " WHERE maGV LIKE ? OR hoTen LIKE ? OR gioiTinh LIKE ? OR ngaySinh LIKE ? OR SDT LIKE ? OR email LIKE ? OR diaChi LIKE ?";
                     $stmt = $conn->prepare($sql);
                     $stmt->bind_param("sssssss", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm);
@@ -117,7 +117,7 @@ include('partials/connectDB.php');
                   $stmt = $conn->prepare($sql);
                 }
 
-                // Thêm sắp xếp nếu có
+                // Điều kiện sắp xếp
                 if (isset($_GET['column']) && isset($_GET['order']) && in_array($_GET['column'], ['maGV', 'hoTen', 'gioiTinh', 'ngaySinh', 'SDT', 'email', 'diaChi'])) {
                   $column = $_GET['column'];
                   $order = $_GET['order'];
@@ -158,23 +158,6 @@ include('partials/connectDB.php');
       </div>
     </div>
   </section>
+</main>
 
-  <?php
-  if (isset($_GET['delete']) && isset($_GET['maGV'])) {
-    $maGV = $_GET['maGV'];
-    $query = "DELETE FROM giaovien WHERE maGV = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("s", $maGV);
-
-    if ($stmt->execute()) {
-      echo "<script>alert('Xoá thành công!'); window.location.href = 'giaovien.php';</script>";
-    } else {
-      echo "Lỗi khi xoá giáo viên: " . $stmt->error;
-    }
-  }
-  ?>
-</main><!-- End #main -->
-<?php
-include('partials/footer.php');
-
-
+<?php include('partials/footer.php'); ?>
