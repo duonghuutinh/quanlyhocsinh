@@ -172,7 +172,7 @@ include('partials/connectDB.php');
 
   <?php
 // Hiển thị thông tin thống kê lớp học
-$sql = "CALL thong_ke_hocsinh_v4()";
+$sql = "CALL thong_ke_hocsinh_theo_lop()";
 $result = $conn->query($sql);
 ?>
 
