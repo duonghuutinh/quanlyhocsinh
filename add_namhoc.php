@@ -9,7 +9,8 @@ include('partials/connectDB.php');
         <h1>Năm Học</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="index.php">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a href="namhoc.php">Năm học</a></li>
                 <li class="breadcrumb-item active">Thêm Năm Học</li>
             </ol>
         </nav>

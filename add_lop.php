@@ -9,7 +9,8 @@ include('partials/connectDB.php');
         <h1>Lớp</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item"><a href="index.php">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="lop.php">Lớp</a></li>
                 <li class="breadcrumb-item active">Thêm Lớp</li>
             </ol>
         </nav>

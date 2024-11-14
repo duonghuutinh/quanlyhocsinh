@@ -17,12 +17,6 @@ $hocky_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS count 
 <main id="main" class="main">
     <div class="pagetitle">
       <h1>Trang chủ</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active">Trang chủ</li>
-        </ol>
-      </nav>
     </div><!-- End Page Title -->
 
     <section class="section dashboard">

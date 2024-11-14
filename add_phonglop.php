@@ -37,7 +37,8 @@ if (!$result_phong) {
         <h1>Phòng Lớp</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item"><a href="index.php">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="phonglop.php">Phòng lớp</a></li>
                 <li class="breadcrumb-item active">Thêm Phòng Lớp</li>
             </ol>
         </nav>
