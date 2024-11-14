@@ -2,7 +2,79 @@
 include('partials/header.php');
 include('partials/sidebar.php');
 include('partials/connectDB.php');
+
+// Gọi hàm DemSoLuongGiaoVien để lấy tổng số lượng giáo viên
+$query = "SELECT DemSoLuongGiaoVien() AS totalGV";
+$result = $conn->query($query);
+$row = $result->fetch_assoc();
+$totalGV = $row['totalGV'];
+
+// Gọi thủ tục thongKeGiaoVienTheoGioiTinh để lấy số lượng giáo viên theo giới tính
+$thongKe = [];
+$sql = "CALL thongKeGiaoVienTheoGioiTinh()";
+$result = $conn->query($sql);
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $thongKe[] = $row;
+    }
+    $conn->next_result();
+}
+
+if (isset($_GET['delete']) && isset($_GET['maGV'])) {
+  $maGV = $_GET['maGV'];
+
+  // Bắt đầu transaction
+  $conn->begin_transaction();
+
+  try {
+      // Kiểm tra giáo viên có tồn tại không
+      $checkQuery = "SELECT COUNT(*) AS count FROM giaovien WHERE maGV = ?";
+      $stmt = $conn->prepare($checkQuery);
+      $stmt->bind_param("s", $maGV);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $row = $result->fetch_assoc();
+
+      if ($row['count'] > 0) {
+          // Kiểm tra giáo viên có phải là giáo viên chủ nhiệm không
+          $checkHeadTeacherQuery = "SELECT COUNT(*) AS count FROM chunhiem WHERE maGV = ?";
+          $stmt = $conn->prepare($checkHeadTeacherQuery);
+          $stmt->bind_param("s", $maGV);
+          $stmt->execute();
+          $result = $stmt->get_result();
+          $row = $result->fetch_assoc();
+
+          if ($row['count'] > 0) {
+              // Nếu giáo viên là giáo viên chủ nhiệm, không cho phép xóa
+              throw new Exception("Giáo viên này đang là chủ nhiệm lớp và không thể xóa!");
+          }
+
+          // Nếu giáo viên không phải chủ nhiệm, thực hiện xóa
+          $deleteQuery = "DELETE FROM giaovien WHERE maGV = ?";
+          $stmt = $conn->prepare($deleteQuery);
+          $stmt->bind_param("s", $maGV);
+
+          if ($stmt->execute()) {
+              // Commit transaction nếu xóa thành công
+              $conn->commit();
+              echo "<script>alert('Xoá thành công!'); window.location.href = 'giaovien.php';</script>";
+          } else {
+              throw new Exception("Có lỗi khi xóa giáo viên.");
+          }
+      } else {
+          echo "<script>alert('Giáo viên không tồn tại!'); window.location.href = 'giaovien.php';</script>";
+      }
+  } catch (Exception $e) {
+      // Rollback transaction nếu xảy ra lỗi
+      $conn->rollback();
+      echo "<script>alert('{$e->getMessage()}'); window.location.href = 'giaovien.php';</script>";
+  }
+}
 ?>
+
+?>
+
+
 <main id="main" class="main">
   <div class="pagetitle">
     <h1>Giáo Viên</h1>
@@ -12,7 +84,20 @@ include('partials/connectDB.php');
         <li class="breadcrumb-item active">Giáo viên</li>
       </ol>
     </nav>
-  </div><!-- End Page Title -->
+  </div>
+
+  <!-- Hiển thị thống kê giáo viên -->
+  <div class="pagetitle">
+    <h1>Tổng số lượng giáo viên: <?php echo $totalGV; ?></h1>
+    <h1>Thống kê theo giới tính:</h1>
+    <ul>
+      <?php foreach ($thongKe as $item): ?>
+        <li><?php echo $item['gioiTinh']; ?>: <?php echo $item['soLuong']; ?> giáo viên</li>
+      <?php endforeach; ?>
+    </ul>
+  </div>
+
+  <!-- Hiển thị danh sách giáo viên -->
   <div class="pagetitle">
     <h1>Danh sách giáo viên</h1>
   </div>
@@ -22,20 +107,16 @@ include('partials/connectDB.php');
         <div class="card">
           <div class="card-body">
             <h5 class="card-title d-flex justify-content-between align-items-center">
-
-              <!-- Group buttons and search form in the same row -->
-              <div class="d-flex align-items-center w-100 ">
-                <!-- Add and Export PDF buttons -->
+              <div class="d-flex align-items-center w-100">
                 <a href="add_giaovien.php" class="btn btn-primary me-2">Thêm</a>
                 <a href="export_pdf_giaovien.php?column=<?php echo isset($_GET['column']) ? $_GET['column'] : ''; ?>&keyword=<?php echo isset($_GET['keyword']) ? $_GET['keyword'] : ''; ?>&order=<?php echo isset($_GET['order']) ? $_GET['order'] : 'asc'; ?>" class="btn btn-success me-4">
-    <i class="ri-file-pdf-line"></i> Xuất PDF
-</a>
-                <!-- Search Form -->
+                  <i class="ri-file-pdf-line"></i> Xuất PDF
+                </a>
               </div>
-
             </h5>
             <div class="row">
-              <form method="GET" action="" class="d-flex align-items-center  w-50 ">
+              <!-- Form tìm kiếm -->
+              <form method="GET" action="" class="d-flex align-items-center w-50">
                 <div class="me-2" style="flex: 1;">
                   <select name="column" class="form-select">
                     <option value="">Tất cả</option>
@@ -53,7 +134,9 @@ include('partials/connectDB.php');
                 </div>
                 <button type="submit" class="btn btn-primary">Tìm kiếm</button>
               </form>
-              <form method="GET" action="" class="d-flex align-items-center  w-50">
+
+              <!-- Form sắp xếp -->
+              <form method="GET" action="" class="d-flex align-items-center w-50">
                 <div class="me-2" style="flex: 1;">
                   <select name="column" class="form-select">
                     <option value="">Chọn cột sắp xếp</option>
@@ -76,7 +159,7 @@ include('partials/connectDB.php');
               </form>
             </div>
 
-            <!-- Search Form -->
+            <!-- Bảng hiển thị giáo viên -->
             <table class="table table-bordered">
               <thead>
                 <tr>
@@ -91,13 +174,12 @@ include('partials/connectDB.php');
                   <th scope="col">Thao tác</th>
                 </tr>
               </thead>
-
               <tbody>
                 <?php
-                // Kiểm tra và tạo SQL cho việc tìm kiếm
-                $sql = "SELECT * FROM giaovien";
-
-                // Thêm phần tìm kiếm vào SQL nếu có
+                // Truy vấn danh sách giáo viên từ view
+                $sql = "SELECT * FROM danhSachGiaoVien";
+                
+                // Điều kiện tìm kiếm
                 if (isset($_GET['keyword']) && $_GET['keyword'] != "") {
                   $column = $_GET['column'];
                   $keyword = $_GET['keyword'];
@@ -108,7 +190,6 @@ include('partials/connectDB.php');
                     $stmt = $conn->prepare($sql);
                     $stmt->bind_param("s", $searchTerm);
                   } else {
-                    // Tìm kiếm trong nhiều cột
                     $sql .= " WHERE maGV LIKE ? OR hoTen LIKE ? OR gioiTinh LIKE ? OR ngaySinh LIKE ? OR SDT LIKE ? OR email LIKE ? OR diaChi LIKE ?";
                     $stmt = $conn->prepare($sql);
                     $stmt->bind_param("sssssss", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm);
@@ -117,7 +198,7 @@ include('partials/connectDB.php');
                   $stmt = $conn->prepare($sql);
                 }
 
-                // Thêm sắp xếp nếu có
+                // Điều kiện sắp xếp
                 if (isset($_GET['column']) && isset($_GET['order']) && in_array($_GET['column'], ['maGV', 'hoTen', 'gioiTinh', 'ngaySinh', 'SDT', 'email', 'diaChi'])) {
                   $column = $_GET['column'];
                   $order = $_GET['order'];
@@ -158,23 +239,6 @@ include('partials/connectDB.php');
       </div>
     </div>
   </section>
+</main>
 
-  <?php
-  if (isset($_GET['delete']) && isset($_GET['maGV'])) {
-    $maGV = $_GET['maGV'];
-    $query = "DELETE FROM giaovien WHERE maGV = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("s", $maGV);
-
-    if ($stmt->execute()) {
-      echo "<script>alert('Xoá thành công!'); window.location.href = 'giaovien.php';</script>";
-    } else {
-      echo "Lỗi khi xoá giáo viên: " . $stmt->error;
-    }
-  }
-  ?>
-</main><!-- End #main -->
-<?php
-include('partials/footer.php');
-
-
+<?php include('partials/footer.php'); ?>
