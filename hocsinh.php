@@ -98,6 +98,7 @@ include('partials/connectDB.php');
               </thead>
               <tbody>
                 <?php
+<<<<<<< HEAD
                 $sql = "SELECT hocsinh.*, lop.tenLop, namhoc.nienKhoa
                         FROM hocsinh
                         JOIN lop ON hocsinh.maLop = lop.maLop
@@ -126,6 +127,9 @@ if (isset($_GET['keyword']) && $_GET['keyword'] != "") {
 } else {
   $stmt = $conn->prepare($sql);
 }
+=======
+                $sql = "SELECT * FROM danhsachhocsinh";
+>>>>>>> caed007 (hocsinh)
 
 
 
@@ -176,6 +180,7 @@ if (isset($_GET['keyword']) && $_GET['keyword'] != "") {
     </div>
   </section>
 
+<<<<<<< HEAD
   <?php
   // Hiển thị thông tin thống kê lớp học
   $sql = "CALL thong_ke_hocsinh_theo_lop()";
@@ -216,10 +221,110 @@ if (isset($_GET['keyword']) && $_GET['keyword'] != "") {
       ?>
     </div>
   </div>
+=======
+  <section class="section">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Danh sách thống kê theo lớp từng niên khóa</h5>
+
+            <?php
+            // Gọi thủ tục tính tổng học sinh theo lớp và niên khoá
+            $sql = "CALL tinh_tong_hoc_sinh_theo_lop_nien_khoa()";
+            $result = $conn->query($sql);
+
+            if ($result->num_rows > 0) {
+                echo "<table class='table table-bordered'>
+                        <thead>
+                            <tr>
+                                <th>Niên khoá</th>
+                                <th>Lớp</th>
+                                <th>Tổng số học sinh</th>
+                                <th>Số học sinh nam</th>
+                                <th>Số học sinh nữ</th>
+                            </tr>
+                        </thead>
+                        <tbody>";
+                while ($row = $result->fetch_assoc()) {
+                    echo "<tr>
+                            <td>" . $row['nienKhoa'] . "</td>
+                            <td>" . $row['tenLop'] . "</td>
+                            <td>" . $row['tongSo'] . "</td>
+                            <td>" . $row['soNam'] . "</td>
+                            <td>" . $row['soNu'] . "</td>
+                          </tr>";
+                }
+                echo "</tbody></table>";
+            } else {
+                echo "Không có dữ liệu thống kê.";
+            }
+            ?>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Tổng số học sinh trường theo niên khóa</h5>
+
+            <?php
+            // Call stored procedure for statistics by school and year
+            $sql = "CALL tinh_tong_hoc_sinh_truong_theo_nien_khoa()";
+
+            // Make sure the previous query result is cleared before running the new one
+            if ($conn->more_results()) {
+                $conn->next_result();
+            }
+
+            if ($result = $conn->query($sql)) {
+                // Check if the query was successful
+                if ($result->num_rows > 0) {
+                    echo "<table class='table table-bordered'>
+                            <thead>
+                                <tr>
+                                    <th>Niên khoá</th>
+                                    <th>Tổng số học sinh</th>
+                                    <th>Số học sinh nam</th>
+                                    <th>Số học sinh nữ</th>
+                                </tr>
+                            </thead>
+                            <tbody>";
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<tr>
+                                <td>" . $row['nienKhoa'] . "</td>
+                                <td>" . $row['tongSo'] . "</td>
+                                <td>" . $row['soNam'] . "</td>
+                                <td>" . $row['soNu'] . "</td>
+                              </tr>";
+                    }
+                    echo "</tbody></table>";
+                } else {
+                    echo "Không có dữ liệu thống kê.";
+                }
+
+                // Free the result set to avoid memory issues
+                $result->free();
+            } else {
+                echo "Error executing query: " . $conn->error;
+            }
+            ?>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+>>>>>>> caed007 (hocsinh)
 
 
 
-</main><!-- End #main -->
+
+</main>
 
 <?php
 // Xử lý xóa học sinh
@@ -236,5 +341,10 @@ if (isset($_GET['delete']) && isset($_GET['maHS'])) {
   }
 }
 ?>
+<<<<<<< HEAD
 include('partials/footer.php');
 ?>
+=======
+
+<?php include('partials/footer.php'); ?>
+>>>>>>> caed007 (hocsinh)

@@ -2,9 +2,81 @@
 include('partials/header.php');
 include('partials/sidebar.php');
 include('partials/connectDB.php');
+<<<<<<< HEAD
 ?>
 
 
+=======
+
+// Gọi hàm DemSoLuongGiaoVien để lấy tổng số lượng giáo viên
+$query = "SELECT DemSoLuongGiaoVien() AS totalGV";
+$result = $conn->query($query);
+$row = $result->fetch_assoc();
+$totalGV = $row['totalGV'];
+
+// Gọi thủ tục thongKeGiaoVienTheoGioiTinh để lấy số lượng giáo viên theo giới tính
+$thongKe = [];
+$sql = "CALL thongKeGiaoVienTheoGioiTinh()";
+$result = $conn->query($sql);
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $thongKe[] = $row;
+    }
+    $conn->next_result();
+}
+
+if (isset($_GET['delete']) && isset($_GET['maGV'])) {
+  $maGV = $_GET['maGV'];
+
+  // Bắt đầu transaction
+  $conn->begin_transaction();
+
+  try {
+      // Kiểm tra giáo viên có tồn tại không
+      $checkQuery = "SELECT COUNT(*) AS count FROM giaovien WHERE maGV = ?";
+      $stmt = $conn->prepare($checkQuery);
+      $stmt->bind_param("s", $maGV);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $row = $result->fetch_assoc();
+
+      if ($row['count'] > 0) {
+          // Kiểm tra giáo viên có phải là giáo viên chủ nhiệm không
+          $checkHeadTeacherQuery = "SELECT COUNT(*) AS count FROM chunhiem WHERE maGV = ?";
+          $stmt = $conn->prepare($checkHeadTeacherQuery);
+          $stmt->bind_param("s", $maGV);
+          $stmt->execute();
+          $result = $stmt->get_result();
+          $row = $result->fetch_assoc();
+
+          if ($row['count'] > 0) {
+              // Nếu giáo viên là giáo viên chủ nhiệm, không cho phép xóa
+              throw new Exception("Giáo viên này đang là chủ nhiệm lớp và không thể xóa!");
+          }
+
+          // Nếu giáo viên không phải chủ nhiệm, thực hiện xóa
+          $deleteQuery = "DELETE FROM giaovien WHERE maGV = ?";
+          $stmt = $conn->prepare($deleteQuery);
+          $stmt->bind_param("s", $maGV);
+
+          if ($stmt->execute()) {
+              // Commit transaction nếu xóa thành công
+              $conn->commit();
+              echo "<script>alert('Xoá thành công!'); window.location.href = 'giaovien.php';</script>";
+          } else {
+              throw new Exception("Có lỗi khi xóa giáo viên.");
+          }
+      } else {
+          echo "<script>alert('Giáo viên không tồn tại!'); window.location.href = 'giaovien.php';</script>";
+      }
+  } catch (Exception $e) {
+      // Rollback transaction nếu xảy ra lỗi
+      $conn->rollback();
+      echo "<script>alert('{$e->getMessage()}'); window.location.href = 'giaovien.php';</script>";
+  }
+}
+?>
+>>>>>>> caed007 (hocsinh)
 <main id="main" class="main">
   <div class="pagetitle">
     <h1>Giáo Viên</h1>
